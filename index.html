@@ -17,6 +17,38 @@
         body {
             font-family: 'Sarabun', sans-serif;
         }
+        
+        /* Custom Styling for Likert Buttons */
+        .likert-btn { 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            border: 2px solid #e2e8f0; 
+            background-color: white; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #64748b;
+            cursor: pointer;
+        }
+        .likert-btn input[type="radio"] {
+            display: none; /* ซ่อน radio button เดิม */
+        }
+        /* เมื่อปุ่มนี้มี radio button ที่ถูกเลือกอยู่ข้างใน */
+        .likert-btn:has(input[type="radio"]:checked) {
+            background: linear-gradient(135deg, #ec4899, #f43f5e); 
+            border-color: transparent; 
+            color: white;
+            transform: scale(1.1) translateY(-2px); 
+            box-shadow: 0 8px 15px rgba(244, 114, 182, 0.4);
+        }
+        .likert-btn:hover:not(:has(input[type="radio"]:checked)) { 
+            border-color: #fbcfe8; 
+            background-color: #fdf2f8;
+            color: #db2777; 
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(244, 114, 182, 0.15);
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-rose-50 via-pink-50 to-emerald-50 min-h-screen">
@@ -30,7 +62,7 @@
                         <i class="fa-solid fa-chart-line text-xl"></i>
                     </div>
                     <div>
-                        <span class="font-bold text-gray-800 text-lg block">Smart Dashboard ME</span>
+                        <span class="font-bold text-gray-800 text-sm sm:text-lg block">แบบประเมินการใช้งาน Smart Dashboard Med Error</span>
                         <span class="text-xs text-pink-600 block">งานวิจัยพัฒนาและทดสอบระบบประเมินผล รพ.กุดจับ</span>
                     </div>
                 </div>
@@ -599,19 +631,19 @@
                             const fieldId = `${dom.prefix}${exactNum}`;
                             
                             const itemDiv = document.createElement('div');
-                            itemDiv.className = 'p-4 rounded-xl hover:bg-gray-50/70 transition-all border-b border-gray-50';
+                            itemDiv.className = 'p-4 sm:p-5 rounded-2xl hover:bg-pink-50/30 transition-all border border-transparent hover:border-pink-100 mb-2';
                             itemDiv.innerHTML = `
-                                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                                    <span class="text-gray-700 text-sm flex-1 font-medium">${exactNum}. ${qText} <span class="text-rose-500">*</span></span>
-                                    <div class="flex items-center space-x-1 justify-between sm:justify-start">
-                                        <span class="text-xs text-gray-400 mr-2">น้อยสุด</span>
+                                <div class="flex flex-col lg:flex-row justify-between lg:items-center gap-4">
+                                    <span class="text-gray-700 text-sm sm:text-base flex-1 font-medium leading-relaxed">${exactNum}. ${qText} <span class="text-rose-500">*</span></span>
+                                    <div class="flex items-center justify-between w-full lg:w-auto sm:justify-start gap-1 sm:gap-2">
+                                        <span class="text-xs text-gray-400 mr-1 sm:mr-3 hidden sm:inline-block">น้อยสุด</span>
                                         ${[1,2,3,4,5].map(v => `
-                                            <label class="flex flex-col items-center justify-center cursor-pointer p-1">
-                                                <input type="radio" name="${fieldId}" value="${v}" class="w-5 h-5 text-pink-600 focus:ring-pink-500 accent-pink-500" required>
-                                                <span class="text-xs text-gray-500 mt-1">${v}</span>
+                                            <label class="likert-btn w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl text-sm sm:text-base">
+                                                <input type="radio" name="${fieldId}" value="${v}" required>
+                                                ${v}
                                             </label>
                                         `).join('')}
-                                        <span class="text-xs text-gray-400 ml-2">มากสุด</span>
+                                        <span class="text-xs text-gray-400 ml-1 sm:ml-3 hidden sm:inline-block">มากสุด</span>
                                     </div>
                                 </div>
                             `;
@@ -619,7 +651,7 @@
                         });
                         sectionDiv.appendChild(domDiv);
                     });
-                }
+                } else if (sec.type === 'numerical') {
                 container.appendChild(sectionDiv);
             });
         }
