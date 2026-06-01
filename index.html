@@ -675,12 +675,19 @@
             const preBtn = document.getElementById('select-pre-btn');
             const postBtn = document.getElementById('select-post-btn');
 
+            // ใช้การเพิ่ม/ลบ class แทนการแก้ไข className ตรงๆ เพื่อไม่ให้ลบ class hidden ทิ้ง
             if(type === 'pre') {
-                preBtn.className = 'flex-1 py-3 text-sm sm:text-base font-bold rounded-xl transition-all duration-300 bg-white text-pink-600 shadow-sm border border-gray-200/50';
-                postBtn.className = 'flex-1 py-3 text-sm sm:text-base font-bold rounded-xl transition-all duration-300 text-gray-500 hover:text-gray-800';
+                preBtn.classList.add('bg-white', 'text-pink-600', 'shadow-sm', 'border', 'border-gray-200/50');
+                preBtn.classList.remove('text-gray-500', 'hover:text-gray-800');
+                
+                postBtn.classList.add('text-gray-500', 'hover:text-gray-800');
+                postBtn.classList.remove('bg-white', 'text-pink-600', 'shadow-sm', 'border', 'border-gray-200/50');
             } else {
-                postBtn.className = 'flex-1 py-3 text-sm sm:text-base font-bold rounded-xl transition-all duration-300 bg-white text-pink-600 shadow-sm border border-gray-200/50';
-                preBtn.className = 'flex-1 py-3 text-sm sm:text-base font-bold rounded-xl transition-all duration-300 text-gray-500 hover:text-gray-800';
+                postBtn.classList.add('bg-white', 'text-pink-600', 'shadow-sm', 'border', 'border-gray-200/50');
+                postBtn.classList.remove('text-gray-500', 'hover:text-gray-800');
+                
+                preBtn.classList.add('text-gray-500', 'hover:text-gray-800');
+                preBtn.classList.remove('bg-white', 'text-pink-600', 'shadow-sm', 'border', 'border-gray-200/50');
             }
 
             // Animate form container
@@ -916,7 +923,7 @@
         }
 
         function calculateMeanAndSD(list, keys) {
-            if(list.length === 0) return { mean: 0.00.toFixed(2), sd: 0.00.toFixed(2) };
+            if(list.length === 0) return { mean: "0.00", sd: "0.00" };
             
             let values = [];
             list.forEach(item => {
@@ -925,7 +932,7 @@
                 });
             });
 
-            if(values.length === 0) return { mean: 0.00.toFixed(2), sd: 0.00.toFixed(2) };
+            if(values.length === 0) return { mean: "0.00", sd: "0.00" };
 
             const mean = values.reduce((sum, v) => sum + v, 0) / values.length;
             const variance = values.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / (values.length > 1 ? values.length - 1 : 1);
