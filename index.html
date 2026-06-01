@@ -182,6 +182,63 @@
 
             <!-- หน้าแสดงเครื่องมือการควบคุมของผู้ดูแลระบบ -->
             <div id="admin-panel" class="hidden space-y-8">
+                
+                <!-- NEW: จัดการข้อมูลสถิติงานวิจัย (สำหรับผู้วิจัยกรอกเอง) -->
+                <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-xl border border-pink-50">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-xl font-extrabold text-gray-800"><i class="fa-solid fa-clipboard-list text-pink-500 mr-2"></i>บันทึกข้อมูลสถิติระบบ (สำหรับผู้วิจัย)</h2>
+                    </div>
+                    <p class="text-sm text-gray-500 mb-6">ข้อมูลตัวเลขเหล่านี้จะนำไปใช้แสดงผลเป็นกราฟแท่งเปรียบเทียบในหน้า Dashboard โดยอัตโนมัติ</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- ฝั่ง Pre-test (Baseline) -->
+                        <div class="space-y-4 p-5 bg-pink-50/50 rounded-2xl border border-pink-100">
+                            <h3 class="font-bold text-pink-700 border-b border-pink-200 pb-2">สถิติระบบเดิม (Baseline / Pre-test)</h3>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">จำนวนรายงาน OPD (ครั้ง/เดือน)</label>
+                                <input type="number" id="admin-pre-opd" class="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-pink-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">จำนวนรายงาน IPD (ครั้ง/เดือน)</label>
+                                <input type="number" id="admin-pre-ipd" class="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-pink-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">ระยะเวลาเฉลี่ยบันทึกรายงาน (ชั่วโมง)</label>
+                                <input type="number" id="admin-pre-time" class="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-pink-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">คุณภาพกรอกข้อมูลครบถ้วน (%)</label>
+                                <input type="number" id="admin-pre-acc" class="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-pink-500 outline-none">
+                            </div>
+                        </div>
+
+                        <!-- ฝั่ง Post-test -->
+                        <div class="space-y-4 p-5 bg-emerald-50/50 rounded-2xl border border-emerald-100">
+                            <h3 class="font-bold text-emerald-700 border-b border-emerald-200 pb-2">สถิติระบบใหม่ (Smart Dashboard / Post-test)</h3>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">จำนวนรายงาน OPD (ครั้ง/เดือน)</label>
+                                <input type="number" id="admin-post-opd" class="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">จำนวนรายงาน IPD (ครั้ง/เดือน)</label>
+                                <input type="number" id="admin-post-ipd" class="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">ระยะเวลาเฉลี่ยบันทึกรายงาน (ชั่วโมง)</label>
+                                <input type="number" id="admin-post-time" class="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">คุณภาพกรอกข้อมูลครบถ้วน (%)</label>
+                                <input type="number" id="admin-post-acc" class="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 outline-none">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button onclick="saveAdminStats()" class="mt-6 bg-pink-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-pink-600 transition-all duration-200 text-sm shadow-md">
+                        <i class="fa-solid fa-save mr-2"></i>อัปเดตข้อมูลขึ้น Dashboard
+                    </button>
+                </div>
+
                 <!-- ตั้งค่าการส่งข้อมูลไปยัง Google Apps Script -->
                 <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-xl border border-pink-50">
                     <h2 class="text-xl font-extrabold text-gray-800 mb-4"><i class="fa-solid fa-gears text-pink-500 mr-2"></i>การตั้งค่าการเชื่อมต่อ Google Sheets</h2>
@@ -191,7 +248,7 @@
                             <input type="text" id="gas-url" class="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm font-mono" placeholder="https://script.google.com/macros/s/.../exec">
                         </div>
                         <button onclick="saveGasUrl()" class="bg-pink-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-pink-600 transition-all duration-200 text-sm">
-                            <i class="fa-solid fa-save mr-2"></i>บันทึกการตั้งค่าลิงก์เชื่อมต่อ
+                            <i class="fa-solid fa-link mr-2"></i>บันทึกการตั้งค่าลิงก์เชื่อมต่อ
                         </button>
                     </div>
                 </div>
@@ -202,10 +259,10 @@
                         <h2 class="text-xl font-extrabold text-gray-800"><i class="fa-solid fa-database text-pink-500 mr-2"></i>รายการข้อมูลดิบที่ถูกบันทึก (ระบบจำลอง LocalStorage)</h2>
                         <div class="flex space-x-2">
                             <button onclick="exportDataToCsv()" class="bg-emerald-500 text-white font-semibold py-2 px-4 rounded-xl hover:bg-emerald-600 transition-all text-sm">
-                                <i class="fa-solid fa-file-csv mr-1"></i>ส่งออกเป็นไฟล์ CSV
+                                <i class="fa-solid fa-file-csv mr-1"></i>ส่งออกไฟล์ CSV
                             </button>
                             <button onclick="clearSystemData()" class="bg-rose-500 text-white font-semibold py-2 px-4 rounded-xl hover:bg-rose-600 transition-all text-sm">
-                                <i class="fa-solid fa-trash mr-1"></i>ล้างข้อมูลทั้งหมด
+                                <i class="fa-solid fa-trash mr-1"></i>ล้างข้อมูล
                             </button>
                         </div>
                     </div>
@@ -238,7 +295,7 @@
 
     <!-- ส่วน Script โครงสร้างการทำงานทั้งหมดของระบบ -->
     <script>
-        // --- 1. ข้อมูลโครงสร้างแบบสอบถามทั้งหมด ---
+        // --- 1. ข้อมูลโครงสร้างแบบสอบถามทั้งหมด (ลบส่วนกรอกสถิติออกไปไว้ที่ Admin แล้ว) ---
         const demographics = {
             title: 'ส่วนที่ 1 ข้อมูลทั่วไป (ข้อมูลส่วนบุคคล)',
             type: 'radio',
@@ -298,74 +355,6 @@
                             'ต้องการระบบที่ออกแบบให้สามารถใช้งานผ่านโทรศัพท์มือถือได้อย่างสะดวกและรวดเร็ว',
                             'ต้องการระบบที่เอื้อให้ผู้บริหารหรือผู้เกี่ยวข้องสามารถเข้าดูสถิติผลลัพธ์แบบ Near Real-Time ได้',
                             'ต้องการระบบที่มีการสรุปผลการรายงานประจำเดือนหรือประจำปีแบบอัตโนมัติ'
-                        ]
-                    }
-                ]
-            },
-            {
-                title: 'ส่วนที่ 3 ข้อมูลสถิติประสิทธิภาพการรายงานระบบเดิม (ผู้วิจัยกรอกข้อมูลจากการบันทึกผลลัพธ์จริง)',
-                type: 'numerical',
-                sections: [
-                    {
-                        name: '1. ข้อมูลสถิติจำนวนรายงาน (ครั้ง/เดือน)',
-                        prefix: 'Pre3_1_',
-                        questions: [
-                            { id: '1', text: '1.1 จำนวนรายงานความคลาดเคลื่อนที่บันทึกเข้าระบบ (OPD)', val: '' },
-                            { id: '2', text: '1.2 จำนวนรายงานความคลาดเคลื่อนที่บันทึกเข้าระบบ (IPD)', val: '' },
-                            { id: '3', text: '1.3 จำนวนใบสั่งยาที่เกิดขึ้นในระยะเวลารายงาน (OPD)', val: '' },
-                            { id: '4', text: '1.4 จำนวนวันนอนโรงพยาบาลของผู้ป่วยในระยะเวลารายงาน (IPD)', val: '' }
-                        ]
-                    },
-                    {
-                        name: '2. ระยะเวลาเฉลี่ย (ชั่วโมง)',
-                        prefix: 'Pre3_2_',
-                        questions: [
-                            { id: '1', text: '2.1 เวลาเฉลี่ยตั้งแต่เกิดเหตุการณ์จนถึงบันทึกรายงานลงระบบสำเร็จ', val: '' },
-                            { id: '2', text: '2.2 เวลาเฉลี่ยตั้งแต่เริ่มบันทึกรายงานเข้าระบบจนถึงผู้บริหารได้รับทราบข้อมูล', val: '' }
-                        ]
-                    },
-                    {
-                        name: '3. คุณภาพการกรอกข้อมูล (ร้อยละ)',
-                        prefix: 'Pre3_3_',
-                        questions: [
-                            { id: '1', text: '3.1 สัดส่วนร้อยละของข้อมูลรายงานความคลาดเคลื่อนทางยาที่มีความถูกต้องและกรอกครบถ้วน', val: '' }
-                        ]
-                    },
-                    {
-                        name: '4. สัดส่วนประเภทความคลาดเคลื่อนที่พบบ่อย (ร้อยละ)',
-                        prefix: 'Pre3_4_',
-                        questions: [
-                            { id: '1', text: '4.1 สัดส่วนเหตุการณ์ประเภทระดับความรุนแรง A', val: '' },
-                            { id: '2', text: '4.2 สัดส่วนเหตุการณ์ประเภทระดับความรุนแรง B', val: '' },
-                            { id: '3', text: '4.3 สัดส่วนเหตุการณ์ประเภทระดับความรุนแรง C', val: '' },
-                            { id: '4', text: '4.4 สัดส่วนเหตุการณ์ประเภทระดับความรุนแรง D', val: '' },
-                            { id: '5', text: '4.5 สัดส่วนเหตุการณ์ประเภทระดับความรุนแรง E ขึ้นไป', val: '' },
-                            { id: '6', text: '4.6 สัดส่วนเหตุการณ์ประเภทระดับความรุนแรง F-H', val: '' },
-                            { id: '7', text: '4.7 สัดส่วนเหตุการณ์ประเภทระดับความรุนแรง I', val: '' }
-                        ]
-                    },
-                    {
-                        name: '5. จำนวนอัตราการเกิดซ้ำ (ครั้ง/ร้อยละ)',
-                        prefix: 'Pre3_5_',
-                        questions: [
-                            { id: '1', text: '5.1 จำนวนครั้งที่ตรวจพบข้อผิดพลาดเกิดซ้ำในกระบวนการเดิม', val: '' },
-                            { id: '2', text: '5.2 อัตราการเกิดซ้ำของประเภทความคลาดเคลื่อนทางยาในภาพรวม (%)', val: '' }
-                        ]
-                    },
-                    {
-                        name: '6. สถิติจำนวน Near Miss (ครั้ง/ร้อยละ)',
-                        prefix: 'Pre3_6_',
-                        questions: [
-                            { id: '1', text: '6.1 จำนวนครั้งการเกิดเหตุ Near Miss ที่ตรวจพบ', val: '' },
-                            { id: '2', text: '6.2 สัดส่วนการตรวจพบเหตุการณ์แบบ Near Miss (%)', val: '' }
-                        ]
-                    },
-                    {
-                        name: '7. สถิติจำนวนรายงานที่ไม่ได้รับการติดตามความปลอดภัย (ครั้ง/ร้อยละ)',
-                        prefix: 'Pre3_7_',
-                        questions: [
-                            { id: '1', text: '7.1 จำนวนรายงานเหตุความคลาดเคลื่อนระดับรุนแรงที่ไม่ได้รับการสอบสวน/ติดตาม', val: '' },
-                            { id: '2', text: '7.2 อัตราการค้างติดตามรายงานความคลาดเคลื่อนทางยาในภาพรวม (%)', val: '' }
                         ]
                     }
                 ]
@@ -479,28 +468,7 @@
                 ]
             },
             {
-                title: 'ส่วนที่ 4 ผลสัมฤทธิ์และผลกระทบของระบบ (ผู้วิจัยและผู้บริหารร่วมประเมิน)',
-                type: 'numerical',
-                sections: [
-                    {
-                        name: '4.1 ข้อมูลเชิงสถิติและผลลัพธ์ประสิทธิภาพหลังใช้งานระบบ (Post 4a)',
-                        prefix: 'P4a_',
-                        questions: [
-                            { id: '1', text: '1.1 จำนวนรายงานที่บันทึกเข้าระบบ (OPD) (ครั้ง/เดือน)', val: '' },
-                            { id: '2', text: '1.2 จำนวนรายงานที่บันทึกเข้าระบบ (IPD) (ครั้ง/เดือน)', val: '' },
-                            { id: '3', text: '1.3 ระยะเวลาเฉลี่ยตั้งแต่เกิดเหตุการณ์จนถึงบันทึกรายงานสำเร็จ (ชั่วโมง)', val: '' },
-                            { id: '4', text: '1.4 สัดส่วนร้อยละของรายงานที่กรอกข้อมูลครบถ้วน (%)', val: '' },
-                            { id: '5', text: '1.5 จำนวนครั้งการเกิดเหตุ Near Miss ที่ถูกรายงาน (ครั้ง)', val: '' },
-                            { id: '6', text: '2.1 จำนวนเหตุการณ์ระดับรุนแรง E ขึ้นไป (ครั้ง)', val: '' },
-                            { id: '7', text: '2.2 จำนวนเหตุการณ์ระดับไม่รุนแรง A-D (ครั้ง)', val: '' },
-                            { id: '8', text: '2.3 อัตราการเกิดเหตุการณ์ซ้ำในกระบวนการเดิม (%)', val: '' },
-                            { id: '9', text: '2.4 จำนวนครั้งที่เหตุการณ์ความคลาดเคลื่อนทางยาไม่ได้รับการติดตาม (ครั้ง)', val: '' }
-                        ]
-                    }
-                ]
-            },
-            {
-                title: '4.2 ด้านวัฒนธรรมความปลอดภัยของผู้ป่วย (Safety Culture) (1=เห็นด้วยน้อยที่สุด, 5=เห็นด้วยมากที่สุด)',
+                title: 'ส่วนที่ 4 ด้านวัฒนธรรมความปลอดภัยของผู้ป่วย (Safety Culture) (1=เห็นด้วยน้อยที่สุด, 5=เห็นด้วยมากที่สุด)',
                 type: 'likert',
                 domains: [
                     {
@@ -530,6 +498,9 @@
             } else {
                 document.getElementById('gas-url').value = "";
             }
+
+            // โหลดสถิติงานวิจัยสำหรับ Admin
+            loadAdminStats();
 
             renderQuestions();
             updateDashboardData();
@@ -648,29 +619,7 @@
                         });
                         sectionDiv.appendChild(domDiv);
                     });
-                } else if (sec.type === 'numerical') {
-                    sec.sections.forEach(item => {
-                        const subDiv = document.createElement('div');
-                        subDiv.className = 'space-y-4 pt-3';
-                        subDiv.innerHTML = `<h4 class="font-bold text-pink-700 text-sm bg-pink-50/70 p-2 rounded-lg"><i class="fa-solid fa-hashtag mr-2"></i>${item.name}</h4>`;
-
-                        const gridDiv = document.createElement('div');
-                        gridDiv.className = 'grid grid-cols-1 sm:grid-cols-2 gap-4';
-
-                        item.questions.forEach(q => {
-                            const inputId = `${item.prefix}${q.id}`;
-                            gridDiv.innerHTML += `
-                                <div class="space-y-1">
-                                    <label for="${inputId}" class="block text-xs font-semibold text-gray-500">${q.text}</label>
-                                    <input type="number" id="${inputId}" value="${q.val}" class="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-pink-500 focus:outline-none text-sm font-semibold" required>
-                                </div>
-                            `;
-                        });
-                        subDiv.appendChild(gridDiv);
-                        sectionDiv.appendChild(subDiv);
-                    });
                 }
-
                 container.appendChild(sectionDiv);
             });
         }
@@ -683,18 +632,11 @@
             const dataObj = new FormData(formElement);
             let formData = {};
 
-            // ดึงค่า Radio ทุกตัว
             for (let [key, val] of dataObj.entries()) {
                 formData[key] = val;
             }
 
-            // ดึงค่าแบบกรอกตัวเลขด้วยตนเอง
-            const numericalInputs = formElement.querySelectorAll('input[type="number"]');
-            numericalInputs.forEach(inp => {
-                formData[inp.id] = parseFloat(inp.value) || 0;
-            });
-
-            // ตรวจทานว่าตอบข้อสอบแบบ Likert และ Radio ครบถ้วนหรือไม่
+            // ตรวจทานว่าตอบข้อสอบครบถ้วนหรือไม่
             const config = currentType === 'pre' ? preTestConfig : postTestConfig;
             let missing = false;
 
@@ -718,9 +660,8 @@
                 return Swal.fire({
                     icon: 'warning',
                     title: 'ข้อมูลไม่ครบถ้วน',
-                    text: 'กรุณาตอบคำถามแบบเลือกตอบให้ครบทุกข้อ (โปรดเลื่อนดูจุดที่ยังไม่ได้เลือก)',
+                    text: 'กรุณาตอบคำถามให้ครบทุกข้อ (โปรดเลื่อนดูจุดที่ยังไม่ได้เลือก)',
                     confirmButtonColor: '#ec4899',
-                    confirmButtonText: 'กลับไปแก้ไข',
                     customClass: { popup: 'rounded-3xl' }
                 });
             }
@@ -835,7 +776,7 @@
             });
 
             // อัปเดตแผนภูมิความก้าวหน้าประสิทธิภาพ
-            renderComparisonChart(preList, postList);
+            renderComparisonChart();
         }
 
         function calculateMeanAndSD(list, keys) {
@@ -886,27 +827,54 @@
             `;
         }
 
-        function renderComparisonChart(preList, postList) {
-            // ดึงค่าผลรวมสถิติมาแสดง
-            let preOpd = 18, preIpd = 12, preTime = 36, preAcc = 72; // ค่าเฉลี่ยมาตรฐาน (Baseline)
-            let postOpd = 31, postIpd = 23, postTime = 6, postAcc = 94; // ค่าเฉลี่ยมาตรฐาน (Post-test)
+        // โหลดข้อมูลสถิติที่ Admin เคยตั้งไว้
+        function loadAdminStats() {
+            const stats = JSON.parse(localStorage.getItem('kutchap_admin_stats')) || {
+                preOpd: 18, preIpd: 12, preTime: 36, preAcc: 72,
+                postOpd: 31, postIpd: 23, postTime: 6, postAcc: 94
+            };
+            document.getElementById('admin-pre-opd').value = stats.preOpd;
+            document.getElementById('admin-pre-ipd').value = stats.preIpd;
+            document.getElementById('admin-pre-time').value = stats.preTime;
+            document.getElementById('admin-pre-acc').value = stats.preAcc;
+            
+            document.getElementById('admin-post-opd').value = stats.postOpd;
+            document.getElementById('admin-post-ipd').value = stats.postIpd;
+            document.getElementById('admin-post-time').value = stats.postTime;
+            document.getElementById('admin-post-acc').value = stats.postAcc;
+        }
 
-            // หากมีการคีย์ข้อมูลระบบเพิ่มเติมให้นำมาคำนวณ
-            if(preList.length > 0) {
-                const lastPre = preList[preList.length - 1];
-                preOpd = lastPre['Pre3_1_1'] !== undefined ? parseFloat(lastPre['Pre3_1_1']) : preOpd;
-                preIpd = lastPre['Pre3_1_2'] !== undefined ? parseFloat(lastPre['Pre3_1_2']) : preIpd;
-                preTime = lastPre['Pre3_2_1'] !== undefined ? parseFloat(lastPre['Pre3_2_1']) : preTime;
-                preAcc = lastPre['Pre3_3_1'] !== undefined ? parseFloat(lastPre['Pre3_3_1']) : preAcc;
-            }
+        // บันทึกสถิติลง LocalStorage สำหรับผู้วิจัย
+        function saveAdminStats() {
+            const stats = {
+                preOpd: parseFloat(document.getElementById('admin-pre-opd').value) || 0,
+                preIpd: parseFloat(document.getElementById('admin-pre-ipd').value) || 0,
+                preTime: parseFloat(document.getElementById('admin-pre-time').value) || 0,
+                preAcc: parseFloat(document.getElementById('admin-pre-acc').value) || 0,
+                
+                postOpd: parseFloat(document.getElementById('admin-post-opd').value) || 0,
+                postIpd: parseFloat(document.getElementById('admin-post-ipd').value) || 0,
+                postTime: parseFloat(document.getElementById('admin-post-time').value) || 0,
+                postAcc: parseFloat(document.getElementById('admin-post-acc').value) || 0
+            };
+            localStorage.setItem('kutchap_admin_stats', JSON.stringify(stats));
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'บันทึกสถิติงานวิจัยสำเร็จ',
+                text: 'กราฟในหน้า Dashboard ถูกอัปเดตข้อมูลใหม่แล้ว',
+                confirmButtonColor: '#ec4899',
+                customClass: { popup: 'rounded-3xl' }
+            });
+            updateDashboardData();
+        }
 
-            if(postList.length > 0) {
-                const lastPost = postList[postList.length - 1];
-                postOpd = lastPost['P4a_1'] !== undefined ? parseFloat(lastPost['P4a_1']) : postOpd;
-                postIpd = lastPost['P4a_2'] !== undefined ? parseFloat(lastPost['P4a_2']) : postIpd;
-                postTime = lastPost['P4a_3'] !== undefined ? parseFloat(lastPost['P4a_3']) : postTime;
-                postAcc = lastPost['P4a_4'] !== undefined ? parseFloat(lastPost['P4a_4']) : postAcc;
-            }
+        // เรนเดอร์กราฟโดยใช้ค่าจาก Admin
+        function renderComparisonChart() {
+            const stats = JSON.parse(localStorage.getItem('kutchap_admin_stats')) || {
+                preOpd: 18, preIpd: 12, preTime: 36, preAcc: 72,
+                postOpd: 31, postIpd: 23, postTime: 6, postAcc: 94
+            };
 
             const ctx = document.getElementById('compChart').getContext('2d');
             if (resultChart) resultChart.destroy();
@@ -918,7 +886,7 @@
                     datasets: [
                         {
                             label: 'Baseline (ระบบเดิม)',
-                            data: [preOpd, preIpd, preTime, preAcc],
+                            data: [stats.preOpd, stats.preIpd, stats.preTime, stats.preAcc],
                             backgroundColor: 'rgba(244, 114, 182, 0.75)',
                             borderColor: 'rgb(244, 114, 182)',
                             borderWidth: 1,
@@ -926,7 +894,7 @@
                         },
                         {
                             label: 'Post-test (Smart Dashboard)',
-                            data: [postOpd, postIpd, postTime, postAcc],
+                            data: [stats.postOpd, stats.postIpd, stats.postTime, stats.postAcc],
                             backgroundColor: 'rgba(16, 185, 129, 0.75)',
                             borderColor: 'rgb(16, 185, 129)',
                             borderWidth: 1,
