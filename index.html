@@ -1,120 +1,70 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Dashboard Research System</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Prompt', 'sans-serif'] },
-                    colors: { 
-                        primary: '#f472b6', 
-                        secondary: '#fb7185', 
-                        accent: '#e879f9' 
-                    },
-                    boxShadow: {
-                        'soft': '0 10px 40px -10px rgba(0,0,0,0.05)',
-                        'glow-pink': '0 0 20px rgba(244, 114, 182, 0.3)',
-                        'glow-rose': '0 0 20px rgba(251, 113, 133, 0.3)',
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body { background-color: #fdf2f8; background-attachment: fixed; color: #334155; }
-        .likert-btn { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 2px solid #e2e8f0; background-color: white; }
-        .likert-btn.selected { background: linear-gradient(135deg, #f472b6, #fb7185); border-color: transparent; color: white; transform: scale(1.15) translateY(-2px); box-shadow: 0 8px 15px rgba(244, 114, 182, 0.4); }
-        .tab-btn.active { background: linear-gradient(to right, #fdf2f8, #fff1f2); color: #db2777; font-weight: 700; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
-        .hide { display: none !important; }
-        .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.5); }
-    </style>
-</head>
-<body class="font-sans antialiased h-screen flex flex-col overflow-hidden">
-    <!-- Navigation Bar -->
-    <nav class="glass shadow-sm z-50 shrink-0 border-b border-white/50 relative">
-        <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center gap-2 sm:gap-3">
-                    <div class="bg-gradient-to-br from-pink-400 to-rose-500 p-2.5 rounded-xl shadow-md hidden md:block"><i class="fa-solid fa-laptop-medical text-white text-xl"></i></div>
-                    <span class="font-bold text-base sm:text-xl text-pink-600 truncate">Kutchap Smart Dashboard</span>
-                </div>
-                <div class="flex space-x-1 items-center py-2">
-                    <button onclick="switchTab('survey')" id="tab-survey" class="tab-btn active px-4 py-2 text-sm font-medium">แบบสอบถาม</button>
-                    <button onclick="switchTab('interview')" id="tab-interview" class="tab-btn px-4 py-2 text-sm font-medium">สัมภาษณ์</button>
-                    <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn px-4 py-2 text-sm font-medium">แดชบอร์ด</button>
-                    <button onclick="checkAdminAccess()" id="tab-admin" class="tab-btn px-4 py-2 text-sm font-medium">Admin</button>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <main class="flex-1 overflow-y-auto p-4 sm:p-6" id="main-scroll">
-        <div class="max-w-5xl mx-auto space-y-6">
-            <div id="view-survey" class="space-y-6 pb-20">
-                <div class="bg-gradient-to-br from-pink-500 to-rose-400 rounded-3xl p-8 text-white">
-                    <h1 class="text-3xl font-bold mb-4">การประยุกต์ใช้ AI ในการพัฒนาระบบ Smart Dashboard</h1>
-                    <div class="flex gap-4">
-                        <button onclick="switchSurveyType('pre')" id="btn-type-pre" class="px-6 py-2 rounded-xl bg-white text-pink-600 font-bold">Pre-test</button>
-                        <button onclick="switchSurveyType('post')" id="btn-type-post" class="px-6 py-2 rounded-xl bg-white/20 text-white font-bold">Post-test</button>
-                    </div>
-                </div>
-                <form id="researchForm" onsubmit="submitForm(event)">
-                    <div id="survey-container"></div>
-                    <div class="mt-10 flex justify-center sticky bottom-6"><button type="submit" class="bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold py-4 px-12 rounded-full shadow-lg">บันทึกข้อมูล</button></div>
-                </form>
-            </div>
-            <div id="view-interview" class="hide">...แบบสัมภาษณ์...</div>
-            <div id="view-dashboard" class="hide">...แดชบอร์ด...</div>
-            <div id="view-admin" class="hide">...Admin...</div>
-        </div>
-    </main>
-
-    <script>
-        const demographics = { title: 'ส่วนที่ 1 ข้อมูลทั่วไป', type: 'radio', questions: [
-            { id: 'Q1', text: '1. วิชาชีพ/ตำแหน่งปัจจุบันของท่านคืออะไร', options: ['เภสัชกร', 'พยาบาลวิชาชีพ', 'แพทย์', 'เจ้าพนักงานเภสัชกรรม', 'อื่น ๆ'] },
-            { id: 'Q2', text: '2. ท่านปฏิบัติงานอยู่ที่แผนก/หน่วยงานใด', options: ['ห้องยา/เภสัชกรรม', 'หอผู้ป่วยใน', 'ห้องฉุกเฉิน', 'ผู้ป่วยนอก', 'อื่น ๆ'] },
-            { id: 'Q3', text: '3. ท่านมีประสบการณ์ทำงานในโรงพยาบาลนานเท่าใด', options: ['น้อยกว่า 3 ปี', '3–5 ปี', '6–10 ปี', 'มากกว่า 10 ปี'] }
-        ] };
+<!-- ... existing code ... -->
+        const demographics = {
+            title: 'ส่วนที่ 1 ข้อมูลทั่วไป (ข้อมูลส่วนบุคคล)',
+            type: 'radio',
+            questions: [
+                { id: 'Q1', text: '1. วิชาชีพ/ตำแหน่งปัจจุบันของท่านคืออะไร', options: ['เภสัชกร', 'พยาบาลวิชาชีพ', 'แพทย์', 'เจ้าพนักงานเภสัชกรรม', 'อื่น ๆ'] },
+                { id: 'Q2', text: '2. ท่านปฏิบัติงานอยู่ที่แผนก/หน่วยงานใด', options: ['ห้องยา/เภสัชกรรม', 'หอผู้ป่วยใน', 'ห้องฉุกเฉิน', 'ผู้ป่วยนอก', 'อื่น ๆ'] },
+                { id: 'Q3', text: '3. ท่านมีประสบการณ์ทำงานในโรงพยาบาลนานเท่าใด', options: ['น้อยกว่า 3 ปี', '3–5 ปี', '6–10 ปี', 'มากกว่า 10 ปี'] }
+            ]
+        };
 
         const preTestConfig = [
             demographics,
-            { title: '(ต่อ) ส่วนที่ 1 ข้อมูลทั่วไป', type: 'radio', questions: [
-                { id: 'Q4', text: '4. ตั้งแต่ท่านทำงานที่ รพ.กุดจับ ท่านเคยรายงานความคลาดเคลื่อนทางยากี่ครั้ง', options: ['ไม่เคยรายงาน', 'เคยรายงาน 1–5 ครั้ง', 'เคยรายงาน 6–10 ครั้ง', 'เคยรายงานมากกว่า 10 ครั้ง'] },
-                { id: 'Q5', text: '5. ท่านมีความคุ้นเคยกับการใช้เทคโนโลยีดิจิทัลในการทำงานในระดับใด', options: ['น้อยมาก (1)', 'น้อย (2)', 'ปานกลาง (3)', 'มาก (4)', 'มากที่สุด (5)'] }
-            ]},
-            { title: 'ส่วนที่ 2 สภาพปัญหาและความต้องการ', type: 'likert', groups: [{ title: '2.1 ปัญหาของระบบปัจจุบัน', qs: [{id:'Pre2_1', text:'1. ขั้นตอนยุ่งยาก'}] }] },
             {
-                title: 'ส่วนที่ 3 สำหรับผู้รับผิดชอบงาน ME ของแต่ละหน่วยงาน (ระบุเป็นตัวเลข)',
-                type: 'number',
-                questions: [
-                    {id:'Pre3_1_1', text:'1.1 จำนวนรายงานที่บันทึกเข้าระบบ (OPD)'},
-                    {id:'Pre3_1_2', text:'1.2 จำนวนรายงานที่บันทึกเข้าระบบ (IPD)'},
-                    {id:'Pre3_2_1', text:'2.1 เวลาเฉลี่ยตั้งแต่เกิดเหตุจนถึงบันทึกรายงาน'},
-                    {id:'Pre3_2_2', text:'2.2 เวลาเฉลี่ยตั้งแต่บันทึกจนถึงผู้บริหาร/คณะกรรมการ RM ได้รับข้อมูล (ชั่วโมง/วัน)'}
+                title: '(ต่อ) ส่วนที่ 1 ข้อมูลทั่วไป', type: 'radio', questions: [
+                    { id: 'Q4', text: '4. ตั้งแต่ท่านทำงานที่ รพ.กุดจับ ท่านเคยรายงานความคลาดเคลื่อนทางยากี่ครั้ง', options: ['ไม่เคยรายงาน', 'เคยรายงาน 1–5 ครั้ง', 'เคยรายงาน 6–10 ครั้ง', 'เคยรายงานมากกว่า 10 ครั้ง'] },
+                    { id: 'Q5', text: '5. ท่านมีความคุ้นเคยกับการใช้เทคโนโลยีดิจิทัลในการทำงานในระดับใด', options: ['น้อยมาก (1)', 'น้อย (2)', 'ปานกลาง (3)', 'มาก (4)', 'มากที่สุด (5)'] }
                 ]
+            },
+            {
+                title: 'ส่วนที่ 2 สภาพปัญหาและความต้องการ (1=น้อยที่สุด, 5=มากที่สุด)', type: 'likert',
+<!-- ... existing code ... -->
+            if(missing) {
+                return Swal.fire({
+                    icon: 'warning',
+                    title: 'ข้อมูลไม่ครบถ้วน',
+                    text: 'กรุณาตอบคำถามแบบเลือกตอบให้ครบทุกข้อ (โปรดเลื่อนดูจุดที่ยังไม่ได้เลือก)',
+                    confirmButtonColor: '#f472b6',
+                    confirmButtonText: 'กลับไปแก้ไข',
+                    customClass: { popup: 'rounded-3xl' }
+                });
             }
-        ];
-        // ... (ส่วนที่เหลือของโค้ดให้คงไว้เหมือนเดิม) ...
-        
-        function submitForm(e) {
-            e.preventDefault();
-            // --- ระบบแปลงค่า Q1-Q5 ให้เป็นรูปแบบ ตัวเลข_ข้อความ (เช่น 1_เภสัชกร) ---
+
+            const now = new Date();
+            
+            // --- แปลงค่า Q1-Q5 ให้เป็นรูปแบบ ตัวเลข_ข้อความ ก่อนส่งไป Sheet ---
             let finalData = { ...formData };
             const mapQ1 = { "1": "1_เภสัชกร", "2": "2_พยาบาลวิชาชีพ", "3": "3_แพทย์", "4": "4_เจ้าพนักงานเภสัชกรรม", "5": "5_อื่น ๆ" };
-            // ... (ใส่ map สำหรับ Q2, Q3, Q4, Q5 ให้ครบตามที่เคยคุยกัน) ...
-            
-            // ส่ง finalData ไปยัง fetch(gasUrl, ...) เหมือนเดิม
+            const mapQ2 = { "1": "1_ห้องยา/เภสัชกรรม", "2": "2_หอผู้ป่วยใน", "3": "3_ห้องฉุกเฉิน", "4": "4_ผู้ป่วยนอก", "5": "5_อื่น ๆ" };
+            const mapQ3 = { "1": "1_น้อยกว่า 3 ปี", "2": "2_3–5 ปี", "3": "3_6–10 ปี", "4": "4_มากกว่า 10 ปี" };
+            const mapQ4Pre = { "1": "1_ไม่เคยรายงาน", "2": "2_เคยรายงาน 1–5 ครั้ง", "3": "3_เคยรายงาน 6–10 ครั้ง", "4": "4_เคยรายงานมากกว่า 10 ครั้ง" };
+            const mapQ4Post = { "1": "1_ไม่เคยรายงาน", "2": "2_1–5 ครั้ง", "3": "3_6–10 ครั้ง", "4": "4_มากกว่า 10 ครั้ง" };
+            const mapQ5 = { "1": "1_น้อยมาก", "2": "2_น้อย", "3": "3_ปานกลาง", "4": "4_มาก", "5": "5_มากที่สุด" };
+
+            if(finalData['Q1']) finalData['Q1'] = mapQ1[finalData['Q1']] || finalData['Q1'];
+            if(finalData['Q2']) finalData['Q2'] = mapQ2[finalData['Q2']] || finalData['Q2'];
+            if(finalData['Q3']) finalData['Q3'] = mapQ3[finalData['Q3']] || finalData['Q3'];
+            if(finalData['Q4']) finalData['Q4'] = currentType === 'pre' ? (mapQ4Pre[finalData['Q4']] || finalData['Q4']) : (mapQ4Post[finalData['Q4']] || finalData['Q4']);
+            if(finalData['Q5']) finalData['Q5'] = mapQ5[finalData['Q5']] || finalData['Q5'];
+            // -------------------------------------------------------------------
+
+            finalData['Timestamp'] = now.toISOString();
+            finalData['Consent'] = 'Yes';
+            finalData['Suggestion'] = document.getElementById('suggestion').value;
+            finalData['id'] = document.getElementById('display-run-id').innerText;
+            finalData['FormType'] = currentType === 'pre' ? 'Pre-Test' : 'Post-Test';
+
+            responses.push({...finalData}); // บันทึกฉบับที่แปลงแล้วลง LocalStorage
+            localStorage.setItem('kutchap_data', JSON.stringify(responses));
+
+            const gasUrl = document.getElementById('gas-url').value;
+            if(gasUrl) {
+                Swal.fire({title: 'กำลังบันทึกข้อมูล...', allowOutsideClick: false, didOpen: () => Swal.showLoading(), customClass: { popup: 'rounded-3xl' }});
+                fetch(gasUrl, { method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(finalData) })
+                .then(() => finishSubmit(false)).catch(() => finishSubmit(true));
+            } else { finishSubmit(false); }
         }
-    </script>
-</body>
-</html>
+
+        function finishSubmit(gasError) {
+<!-- ... existing code ... -->
