@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="th" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,306 +14,446 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap');
+        
         body {
             font-family: 'Sarabun', sans-serif;
+            -webkit-font-smoothing: antialiased;
         }
         
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #fdf2f8; }
+        ::-webkit-scrollbar-thumb { background: #fbcfe8; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #f472b6; }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         /* Custom Styling for Likert Buttons */
         .likert-btn { 
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-            border: 2px solid #e2e8f0; 
-            background-color: white; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            border: 2px solid #f1f5f9; 
+            background-color: #f8fafc; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
+            font-weight: 600;
             color: #64748b;
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
         }
         .likert-btn input[type="radio"] {
-            display: none; /* ซ่อน radio button เดิม */
+            display: none;
         }
-        /* เมื่อปุ่มนี้มี radio button ที่ถูกเลือกอยู่ข้างใน */
         .likert-btn:has(input[type="radio"]:checked) {
-            background: linear-gradient(135deg, #ec4899, #f43f5e); 
+            background: linear-gradient(135deg, #f43f5e, #ec4899); 
             border-color: transparent; 
             color: white;
             transform: scale(1.1) translateY(-2px); 
-            box-shadow: 0 8px 15px rgba(244, 114, 182, 0.4);
+            box-shadow: 0 10px 20px -5px rgba(244, 114, 182, 0.5);
         }
         .likert-btn:hover:not(:has(input[type="radio"]:checked)) { 
             border-color: #fbcfe8; 
             background-color: #fdf2f8;
             color: #db2777; 
             transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(244, 114, 182, 0.15);
+            box-shadow: 0 6px 12px -2px rgba(244, 114, 182, 0.15);
+        }
+
+        /* Custom Radio Button Container (ใช้ CSS has selector เพื่อจับ state) */
+        .radio-container {
+            transition: all 0.2s ease;
+        }
+        .radio-container:has(input:checked) {
+            border-color: #ec4899;
+            background-color: #fdf2f8;
+            box-shadow: 0 4px 6px -1px rgba(236, 72, 153, 0.1), 0 2px 4px -1px rgba(236, 72, 153, 0.06);
+        }
+        .radio-container:has(input:checked) span.radio-text {
+            color: #be185d;
+            font-weight: 600;
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-rose-50 via-pink-50 to-emerald-50 min-h-screen">
+<body class="bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-gradient-to-br from-rose-50 via-pink-50/80 to-emerald-50/60 min-h-screen text-gray-800">
 
-    <!-- แถบเมนูด้านบน -->
-    <nav class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-pink-100 shadow-sm">
+    <!-- แถบเมนูด้านบน (Navigation) -->
+    <nav class="bg-white/80 backdrop-blur-xl sticky top-0 z-50 border-b border-pink-100/50 shadow-sm transition-all">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
-                <div class="flex items-center space-x-3">
-                    <div class="bg-pink-500 text-white p-2 rounded-xl shadow-md shadow-pink-200">
-                        <i class="fa-solid fa-chart-line text-xl"></i>
+            <div class="flex flex-col md:flex-row justify-between h-auto md:h-20 py-4 md:py-0 items-center gap-4 md:gap-0">
+                
+                <!-- Logo & Title -->
+                <div class="flex items-center space-x-4">
+                    <div class="bg-gradient-to-tr from-pink-600 to-rose-400 text-white p-2.5 rounded-2xl shadow-lg shadow-pink-200/50 transform hover:scale-105 transition-transform cursor-pointer">
+                        <i class="fa-solid fa-chart-line text-2xl"></i>
                     </div>
                     <div>
-                        <span class="font-bold text-gray-800 text-sm sm:text-lg block">แบบประเมินการใช้งาน Smart Dashboard Med Error</span>
-                        <span class="text-xs text-pink-600 block">งานวิจัยพัฒนาและทดสอบระบบประเมินผล รพ.กุดจับ</span>
+                        <h1 class="font-extrabold text-gray-800 text-base md:text-xl leading-tight tracking-tight">Smart Dashboard Med Error</h1>
+                        <p class="text-xs md:text-sm font-medium text-pink-500 flex items-center mt-0.5">
+                            <i class="fa-solid fa-hospital text-[10px] mr-1.5"></i>งานวิจัยพัฒนาและทดสอบระบบ รพ.กุดจับ
+                        </p>
                     </div>
                 </div>
-                <div class="flex space-x-1 sm:space-x-2">
-                    <button onclick="switchTab('survey-tab')" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 bg-pink-500 text-white shadow-md shadow-pink-200" id="btn-survey-tab">
-                        <i class="fa-solid fa-square-poll-horizontal mr-1 sm:mr-2"></i>ทำแบบสอบถาม
+
+                <!-- Menu Tabs -->
+                <div class="flex space-x-2 bg-gray-100/80 p-1.5 rounded-2xl border border-gray-200/50 w-full md:w-auto justify-center">
+                    <button onclick="switchTab('survey-tab')" class="tab-btn flex-1 md:flex-none px-4 md:px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 bg-white text-pink-600 shadow-sm border border-black/5" id="btn-survey-tab">
+                        <i class="fa-solid fa-square-poll-horizontal mr-2"></i>ทำแบบสอบถาม
                     </button>
-                    <button onclick="switchTab('dashboard-tab')" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 text-gray-600 hover:bg-pink-50" id="btn-dashboard-tab">
-                        <i class="fa-solid fa-gauge mr-1 sm:mr-2"></i>Dashboard วิเคราะห์ผล
+                    <button onclick="switchTab('dashboard-tab')" class="tab-btn flex-1 md:flex-none px-4 md:px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 text-gray-500 hover:text-gray-800 hover:bg-white/50" id="btn-dashboard-tab">
+                        <i class="fa-solid fa-gauge-high mr-2"></i>วิเคราะห์ผล
                     </button>
-                    <button onclick="switchTab('admin-tab')" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 text-gray-600 hover:bg-pink-50" id="btn-admin-tab">
-                        <i class="fa-solid fa-user-lock mr-1 sm:mr-2"></i>ระบบ Admin
+                    <button onclick="switchTab('admin-tab')" class="tab-btn flex-1 md:flex-none px-4 md:px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 text-gray-500 hover:text-gray-800 hover:bg-white/50" id="btn-admin-tab">
+                        <i class="fa-solid fa-user-shield mr-2"></i>ผู้ดูแลระบบ
                     </button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
 
         <!-- ==================== ส่วนที่ 1: แบบสอบถาม (Survey) ==================== -->
-        <section id="survey-tab" class="tab-content">
-            <div class="max-w-4xl mx-auto bg-white/90 backdrop-blur-md p-6 sm:p-10 rounded-3xl shadow-xl border border-pink-100">
-                <div class="text-center mb-8">
-                    <span class="px-4 py-1.5 bg-pink-100 text-pink-700 rounded-full text-xs font-semibold uppercase tracking-wider">ระบบเก็บข้อมูลวิจัย</span>
-                    <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-800 mt-3">แบบสอบถามระบบรายงานความคลาดเคลื่อนทางยา</h1>
-                    <p class="text-gray-500 text-sm sm:text-base mt-2">โปรดเลือกประเภทแบบทดสอบที่ต้องการกรอก เพื่อดำเนินการ</p>
+        <section id="survey-tab" class="tab-content fade-in">
+            <div class="max-w-4xl mx-auto bg-white/95 backdrop-blur-sm p-6 sm:p-12 rounded-[2rem] shadow-2xl shadow-pink-100/50 border border-white">
+                
+                <!-- Header แบบสอบถาม -->
+                <div class="text-center mb-10">
+                    <div class="inline-flex items-center justify-center space-x-2 bg-pink-100/80 text-pink-700 px-4 py-1.5 rounded-full mb-4">
+                        <span class="relative flex h-2.5 w-2.5">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-pink-500"></span>
+                        </span>
+                        <span class="text-xs font-bold tracking-wider uppercase">ระบบเก็บข้อมูลวิจัย</span>
+                    </div>
+                    <h2 class="text-2xl sm:text-4xl font-extrabold text-gray-800 mb-3 tracking-tight">แบบสอบถามประเมินระบบ</h2>
+                    <p class="text-gray-500 text-sm sm:text-base max-w-xl mx-auto">โปรดเลือกประเภทแบบทดสอบด้านล่าง เพื่อดำเนินการประเมินผล ข้อมูลของท่านจะเป็นประโยชน์อย่างยิ่งต่องานวิจัย</p>
 
-                    <!-- ปุ่มเลือก Pre-Test หรือ Post-Test -->
-                    <div class="flex justify-center mt-6 p-1.5 bg-pink-50 rounded-2xl max-w-sm mx-auto">
-                        <button onclick="selectFormType('pre')" class="flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 bg-white text-pink-600 shadow-sm" id="select-pre-btn">
-                            Pre-Test (ก่อนทดลอง)
+                    <!-- Toggle Pre/Post Test (Segmented Control Design) -->
+                    <div class="flex justify-center mt-8 p-1.5 bg-gray-100 rounded-2xl max-w-md mx-auto shadow-inner border border-gray-200/60">
+                        <button onclick="selectFormType('pre')" class="flex-1 py-3 text-sm sm:text-base font-bold rounded-xl transition-all duration-300 bg-white text-pink-600 shadow-sm border border-gray-200/50" id="select-pre-btn">
+                            <i class="fa-solid fa-hourglass-start mr-2"></i>Pre-Test (ก่อนทดลอง)
                         </button>
-                        <!-- ซ่อนปุ่ม Post-test ไว้ชั่วคราว -->
-                        <button onclick="selectFormType('post')" class="hidden flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 text-gray-500 hover:text-pink-600" id="select-post-btn">
-                            Post-Test (หลังทดลอง)
+                        <!-- เพิ่มคลาส hidden เพื่อซ่อนปุ่ม Post-test ชั่วคราว -->
+                        <button onclick="selectFormType('post')" class="hidden flex-1 py-3 text-sm sm:text-base font-bold rounded-xl transition-all duration-300 text-gray-500 hover:text-gray-800" id="select-post-btn">
+                            <i class="fa-solid fa-flag-checkered mr-2"></i>Post-Test (หลังทดลอง)
                         </button>
                     </div>
                 </div>
 
-                <!-- แสดงรหัสแบบสอบถามแบบรันอัตโนมัติ -->
-                <div class="flex justify-between items-center p-4 bg-gray-50 rounded-2xl mb-8 border border-gray-100">
-                    <span class="text-sm font-semibold text-gray-600">รหัสแบบสอบถาม (ระบบกำหนดให้):</span>
-                    <span class="text-lg font-bold text-pink-600 bg-white px-4 py-1.5 rounded-xl shadow-sm border border-pink-100" id="display-run-id">PRE-001</span>
+                <!-- รหัสแบบสอบถาม -->
+                <div class="flex flex-col sm:flex-row justify-between items-center p-5 bg-gradient-to-r from-gray-50 to-pink-50/30 rounded-2xl mb-10 border border-gray-200/60 shadow-sm">
+                    <div class="flex items-center space-x-3 mb-3 sm:mb-0">
+                        <div class="bg-white p-2 rounded-lg shadow-sm text-gray-400 border border-gray-100"><i class="fa-solid fa-fingerprint"></i></div>
+                        <span class="text-sm font-bold text-gray-700">รหัสอ้างอิงแบบสอบถาม:</span>
+                    </div>
+                    <span class="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-rose-500 tracking-wider bg-white px-5 py-2 rounded-xl shadow-sm border border-pink-100" id="display-run-id">PRE-001</span>
                 </div>
 
-                <!-- แบบฟอร์มกรอกข้อมูล -->
-                <form id="researchForm" onsubmit="handleFormSubmit(event)" class="space-y-8">
-                    <div id="survey-questions-container" class="space-y-8">
-                        <!-- คำถามจะประมวลผลขึ้นมาตรงนี้ตาม FormType ที่เลือกไว้ -->
+                <!-- Form -->
+                <form id="researchForm" onsubmit="handleFormSubmit(event)" class="space-y-10">
+                    
+                    <!-- Area สำหรับสร้างคำถาม (JS Injection) -->
+                    <div id="survey-questions-container" class="space-y-10">
+                        <!-- Questions injected here -->
                     </div>
 
-                    <!-- คำถามข้อเสนอแนะเพิ่มเติม -->
-                    <div class="bg-gray-50/50 p-6 rounded-2xl border border-pink-100/50">
-                        <label for="suggestion" class="block text-gray-800 font-bold mb-2">ข้อเสนอแนะและข้อคิดเห็นเพิ่มเติมอื่นๆ ต่อระบบรายงาน</label>
-                        <textarea id="suggestion" rows="3" class="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white/90" placeholder="ความคิดเห็นเพิ่มเติมของท่าน..."></textarea>
+                    <!-- ข้อเสนอแนะ -->
+                    <div class="bg-gradient-to-br from-gray-50 to-white p-8 rounded-[2rem] border border-gray-200 shadow-sm">
+                        <label for="suggestion" class="flex items-center text-gray-800 font-extrabold mb-4 text-lg">
+                            <i class="fa-regular fa-comment-dots text-pink-500 mr-3 text-xl"></i> ข้อเสนอแนะและข้อคิดเห็นเพิ่มเติม (ถ้ามี)
+                        </label>
+                        <textarea id="suggestion" rows="4" class="w-full p-5 rounded-2xl border-2 border-gray-100 focus:border-pink-400 focus:ring-4 focus:ring-pink-100 focus:outline-none transition-all resize-none text-gray-700 leading-relaxed bg-white/50" placeholder="ความคิดเห็น หรือสิ่งที่อยากให้ปรับปรุงเพิ่มเติม..."></textarea>
                     </div>
 
-                    <!-- ปุ่มส่งข้อมูล -->
-                    <div class="pt-6">
-                        <button type="submit" class="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold py-4 px-8 rounded-2xl shadow-lg shadow-pink-200 hover:from-pink-600 hover:to-rose-600 transition-all duration-300 flex items-center justify-center space-x-2 text-lg">
-                            <i class="fa-regular fa-paper-plane"></i>
-                            <span>ส่งแบบสอบถามเข้าระบบ</span>
+                    <!-- Submit Button -->
+                    <div class="pt-6 pb-4">
+                        <button type="submit" class="group relative w-full flex items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-r from-pink-500 via-rose-500 to-pink-600 p-1 text-white shadow-xl shadow-pink-200/50 hover:shadow-pink-300/50 transition-all duration-300 hover:-translate-y-1">
+                            <span class="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                            <div class="flex items-center justify-center w-full px-8 py-4 font-bold text-lg tracking-wide rounded-xl bg-transparent">
+                                <i class="fa-regular fa-paper-plane mr-3 group-hover:animate-bounce"></i>
+                                ส่งแบบสอบถามเข้าระบบ
+                            </div>
                         </button>
+                        <p class="text-center text-xs text-gray-400 mt-4 font-medium"><i class="fa-solid fa-lock mr-1"></i> ข้อมูลของท่านจะถูกเก็บเป็นความลับและใช้เพื่องานวิจัยเท่านั้น</p>
                     </div>
                 </form>
             </div>
         </section>
 
         <!-- ==================== ส่วนที่ 2: แดชบอร์ดวิเคราะห์ผล (Dashboard) ==================== -->
-        <section id="dashboard-tab" class="tab-content hidden">
-            <!-- ภาพรวมสถิติ -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div class="bg-gradient-to-br from-pink-500 to-rose-500 p-6 rounded-3xl text-white shadow-xl">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <span class="text-pink-100 text-sm font-semibold block">ผู้ตอบแบบสอบถาม Pre-test</span>
-                            <span class="text-3xl font-extrabold mt-2 block" id="stat-pre-count">0 คน</span>
+        <section id="dashboard-tab" class="tab-content hidden fade-in">
+            
+            <!-- Summary Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <!-- Card 1 -->
+                <div class="relative overflow-hidden bg-gradient-to-br from-pink-500 to-rose-600 p-8 rounded-[2rem] text-white shadow-xl shadow-pink-200/50 transform hover:-translate-y-1 transition-transform">
+                    <i class="fa-solid fa-clipboard-user absolute -right-6 -bottom-6 text-[8rem] text-white/10 transform rotate-12"></i>
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-pink-100 text-sm font-bold tracking-wide uppercase">ผู้ตอบ Pre-test</span>
+                                <div class="flex items-baseline space-x-2 mt-2">
+                                    <span class="text-5xl font-black" id="stat-pre-count">0</span>
+                                    <span class="text-pink-100 font-medium">คน</span>
+                                </div>
+                            </div>
+                            <div class="bg-white/20 backdrop-blur-md p-3.5 rounded-2xl shadow-inner">
+                                <i class="fa-solid fa-users text-2xl"></i>
+                            </div>
                         </div>
-                        <span class="bg-white/20 p-3 rounded-2xl"><i class="fa-solid fa-users text-xl"></i></span>
                     </div>
                 </div>
-                <div class="bg-gradient-to-br from-emerald-500 to-teal-500 p-6 rounded-3xl text-white shadow-xl">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <span class="text-emerald-100 text-sm font-semibold block">ผู้ตอบแบบสอบถาม Post-test</span>
-                            <span class="text-3xl font-extrabold mt-2 block" id="stat-post-count">0 คน</span>
+
+                <!-- Card 2 -->
+                <div class="relative overflow-hidden bg-gradient-to-br from-emerald-400 to-teal-500 p-8 rounded-[2rem] text-white shadow-xl shadow-emerald-200/50 transform hover:-translate-y-1 transition-transform">
+                    <i class="fa-solid fa-user-check absolute -right-6 -bottom-6 text-[8rem] text-white/10 transform rotate-12"></i>
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-emerald-50 text-sm font-bold tracking-wide uppercase">ผู้ตอบ Post-test</span>
+                                <div class="flex items-baseline space-x-2 mt-2">
+                                    <span class="text-5xl font-black" id="stat-post-count">0</span>
+                                    <span class="text-emerald-50 font-medium">คน</span>
+                                </div>
+                            </div>
+                            <div class="bg-white/20 backdrop-blur-md p-3.5 rounded-2xl shadow-inner">
+                                <i class="fa-solid fa-check-double text-2xl"></i>
+                            </div>
                         </div>
-                        <span class="bg-white/20 p-3 rounded-2xl"><i class="fa-solid fa-users text-xl"></i></span>
                     </div>
                 </div>
-                <div class="bg-gradient-to-br from-indigo-500 to-blue-500 p-6 rounded-3xl text-white shadow-xl">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <span class="text-indigo-100 text-sm font-semibold block">อัตราการกรอกสำเร็จ</span>
-                            <span class="text-3xl font-extrabold mt-2 block">100 %</span>
+
+                <!-- Card 3 -->
+                <div class="relative overflow-hidden bg-gradient-to-br from-indigo-500 to-blue-600 p-8 rounded-[2rem] text-white shadow-xl shadow-blue-200/50 transform hover:-translate-y-1 transition-transform">
+                    <i class="fa-solid fa-chart-pie absolute -right-6 -bottom-6 text-[8rem] text-white/10 transform rotate-12"></i>
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-indigo-100 text-sm font-bold tracking-wide uppercase">อัตราการสำเร็จ</span>
+                                <div class="flex items-baseline space-x-2 mt-2">
+                                    <span class="text-5xl font-black">100</span>
+                                    <span class="text-indigo-100 font-medium">%</span>
+                                </div>
+                            </div>
+                            <div class="bg-white/20 backdrop-blur-md p-3.5 rounded-2xl shadow-inner">
+                                <i class="fa-solid fa-shield-halved text-2xl"></i>
+                            </div>
                         </div>
-                        <span class="bg-white/20 p-3 rounded-2xl"><i class="fa-solid fa-circle-check text-xl"></i></span>
                     </div>
                 </div>
             </div>
 
-            <!-- รายละเอียดการคำนวณสถิติระดับคะแนน -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                <!-- สถิติคะแนนเฉลี่ย Pre-test -->
-                <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-xl border border-pink-50">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-xl font-extrabold text-gray-800"><i class="fa-solid fa-chart-simple text-pink-500 mr-2"></i>สถิติความรู้สึกต่อระบบเดิม (Pre-test)</h2>
-                        <span class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-xs font-semibold">คะแนนเฉลี่ยรายด้าน</span>
+            <!-- Domain Stats Detail -->
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-10">
+                <!-- Pre-test Stats -->
+                <div class="bg-white/90 backdrop-blur-md p-8 rounded-[2rem] shadow-xl shadow-gray-200/50 border border-white">
+                    <div class="flex justify-between items-center mb-8 border-b border-gray-100 pb-5">
+                        <div class="flex items-center">
+                            <div class="bg-pink-100 p-3 rounded-xl mr-4"><i class="fa-solid fa-chart-bar text-pink-600 text-xl"></i></div>
+                            <h2 class="text-xl font-extrabold text-gray-800 tracking-tight">ผลการประเมิน (Pre-test)</h2>
+                        </div>
+                        <span class="px-4 py-1.5 bg-gray-100 text-gray-600 rounded-full text-xs font-bold tracking-wide">คะแนนเฉลี่ยรายด้าน</span>
                     </div>
-                    <div class="space-y-4" id="pre-domain-stats">
-                        <!-- รายละเอียดความพึงพอใจรายโดเมน -->
+                    <div class="space-y-6" id="pre-domain-stats">
+                        <!-- Stats injected via JS -->
                     </div>
                 </div>
 
-                <!-- สถิติคะแนนเฉลี่ย Post-test -->
-                <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-xl border border-pink-50">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-xl font-extrabold text-gray-800"><i class="fa-solid fa-chart-simple text-emerald-500 mr-2"></i>ประสิทธิภาพและความพอใจระบบใหม่ (Post-test)</h2>
-                        <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-semibold">คะแนนเฉลี่ยรายด้าน</span>
+                <!-- Post-test Stats -->
+                <div class="bg-white/90 backdrop-blur-md p-8 rounded-[2rem] shadow-xl shadow-gray-200/50 border border-white">
+                    <div class="flex justify-between items-center mb-8 border-b border-gray-100 pb-5">
+                        <div class="flex items-center">
+                            <div class="bg-emerald-100 p-3 rounded-xl mr-4"><i class="fa-solid fa-chart-line text-emerald-600 text-xl"></i></div>
+                            <h2 class="text-xl font-extrabold text-gray-800 tracking-tight">ผลการประเมิน (Post-test)</h2>
+                        </div>
+                        <span class="px-4 py-1.5 bg-gray-100 text-gray-600 rounded-full text-xs font-bold tracking-wide">คะแนนเฉลี่ยรายด้าน</span>
                     </div>
-                    <div class="space-y-4" id="post-domain-stats">
-                        <!-- รายละเอียดความพึงพอใจรายโดเมน -->
+                    <div class="space-y-6" id="post-domain-stats">
+                        <!-- Stats injected via JS -->
                     </div>
                 </div>
             </div>
 
-            <!-- แผนภูมิเปรียบเทียบข้อมูลสรุปผลเชิงเปรียบเทียบก่อน-หลัง -->
-            <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-xl border border-pink-50">
-                <h2 class="text-xl font-extrabold text-gray-800 mb-6"><i class="fa-solid fa-chart-line text-pink-500 mr-2"></i>เปรียบเทียบผลลัพธ์ประสิทธิภาพก่อน-หลังการใช้ระบบ (Baseline vs Post-test)</h2>
-                <div class="h-96">
+            <!-- Comparison Chart -->
+            <div class="bg-white/90 backdrop-blur-md p-8 rounded-[2rem] shadow-xl shadow-gray-200/50 border border-white">
+                <div class="flex items-center mb-8 border-b border-gray-100 pb-5">
+                    <div class="bg-gradient-to-r from-pink-500 to-rose-500 p-3 rounded-xl mr-4 text-white"><i class="fa-solid fa-scale-balanced text-xl"></i></div>
+                    <div>
+                        <h2 class="text-xl font-extrabold text-gray-800 tracking-tight">เปรียบเทียบผลลัพธ์ประสิทธิภาพก่อน-หลังการใช้ระบบ</h2>
+                        <p class="text-sm text-gray-500 font-medium">Baseline vs Smart Dashboard</p>
+                    </div>
+                </div>
+                <div class="h-[400px] w-full">
                     <canvas id="compChart"></canvas>
                 </div>
             </div>
         </section>
 
         <!-- ==================== ส่วนที่ 3: ระบบผู้จัดการ (Admin) ==================== -->
-        <section id="admin-tab" class="tab-content hidden">
-            <!-- ส่วนลงทะเบียนตรวจสอบสิทธิ์ -->
-            <div id="admin-auth-card" class="max-w-md mx-auto bg-white p-8 rounded-3xl shadow-xl border border-pink-50 text-center">
-                <div class="text-pink-500 bg-pink-50 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
-                    <i class="fa-solid fa-lock text-2xl"></i>
+        <section id="admin-tab" class="tab-content hidden fade-in">
+            
+            <!-- Auth Card -->
+            <div id="admin-auth-card" class="max-w-md mx-auto bg-white/95 backdrop-blur-md p-10 rounded-[2.5rem] shadow-2xl shadow-pink-200/40 border border-white text-center mt-10 relative overflow-hidden">
+                <!-- Decorative Top Blob -->
+                <div class="absolute -top-16 -right-16 w-32 h-32 bg-pink-400 rounded-full mix-blend-multiply filter blur-2xl opacity-50"></div>
+                <div class="absolute -bottom-16 -left-16 w-32 h-32 bg-rose-400 rounded-full mix-blend-multiply filter blur-2xl opacity-50"></div>
+                
+                <div class="relative z-10">
+                    <div class="text-transparent bg-clip-text bg-gradient-to-br from-pink-500 to-rose-600 mb-6">
+                        <i class="fa-solid fa-shield-cat text-6xl drop-shadow-sm"></i>
+                    </div>
+                    <h2 class="text-2xl font-black text-gray-800 mb-2">เข้าสู่ระบบผู้ดูแล</h2>
+                    <p class="text-gray-500 text-sm mb-8 font-medium">กรุณาระบุรหัสผ่านเพื่อเข้าใช้งานเครื่องมือตั้งค่างานวิจัย</p>
+                    
+                    <div class="space-y-4">
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-key text-gray-400"></i>
+                            </div>
+                            <input type="password" id="admin-pass" class="w-full pl-11 pr-4 py-4 rounded-2xl border-2 border-gray-100 bg-gray-50 focus:bg-white focus:border-pink-400 focus:ring-4 focus:ring-pink-100 outline-none transition-all font-mono text-center text-lg tracking-widest" placeholder="••••">
+                        </div>
+                        <button onclick="loginAdmin()" class="w-full bg-gray-900 text-white font-bold py-4 px-6 rounded-2xl hover:bg-gray-800 shadow-lg shadow-gray-300 transition-all duration-300 hover:-translate-y-0.5">
+                            ตรวจสอบสิทธิ์เข้าใช้งาน
+                        </button>
+                    </div>
                 </div>
-                <h2 class="text-xl font-bold text-gray-800 mb-2">เข้าสู่ระบบผู้ดูแลระบบ</h2>
-                <p class="text-gray-500 text-sm mb-6">กรุณาระบุรหัสผ่านเพื่อเข้าใช้งานเครื่องมือวิจัยและตั้งค่าระบบ</p>
-                <input type="password" id="admin-pass" class="w-full p-4 rounded-xl border border-gray-200 text-center mb-4 focus:ring-2 focus:ring-pink-500 outline-none font-mono" placeholder="••••">
-                <button onclick="loginAdmin()" class="w-full bg-pink-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-pink-600 transition-all duration-200">ตรวจสอบรหัสผ่าน</button>
             </div>
 
-            <!-- หน้าแสดงเครื่องมือการควบคุมของผู้ดูแลระบบ -->
+            <!-- Admin Panel (Hidden until login) -->
             <div id="admin-panel" class="hidden space-y-8">
                 
-                <!-- NEW: จัดการข้อมูลสถิติงานวิจัย (สำหรับผู้วิจัยกรอกเอง) -->
-                <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-xl border border-pink-50">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-xl font-extrabold text-gray-800"><i class="fa-solid fa-clipboard-list text-pink-500 mr-2"></i>บันทึกข้อมูลสถิติระบบ (สำหรับผู้วิจัย)</h2>
+                <!-- Manual Stats Input -->
+                <div class="bg-white/95 backdrop-blur-md p-8 rounded-[2rem] shadow-xl shadow-gray-200/50 border border-white">
+                    <div class="flex items-center mb-6 border-b border-gray-100 pb-5">
+                        <div class="bg-indigo-100 p-3 rounded-xl mr-4"><i class="fa-solid fa-sliders text-indigo-600 text-xl"></i></div>
+                        <div>
+                            <h2 class="text-xl font-extrabold text-gray-800">จัดการข้อมูลตัวชี้วัด (KPIs)</h2>
+                            <p class="text-sm text-gray-500">ปรับปรุงข้อมูลเปรียบเทียบในหน้า Dashboard</p>
+                        </div>
                     </div>
-                    <p class="text-sm text-gray-500 mb-6">ข้อมูลตัวเลขเหล่านี้จะนำไปใช้แสดงผลเป็นกราฟแท่งเปรียบเทียบในหน้า Dashboard โดยอัตโนมัติ</p>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- ฝั่ง Pre-test (Baseline) -->
-                        <div class="space-y-4 p-5 bg-pink-50/50 rounded-2xl border border-pink-100">
-                            <h3 class="font-bold text-pink-700 border-b border-pink-200 pb-2">สถิติระบบเดิม (Baseline / Pre-test)</h3>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-600 mb-1">จำนวนรายงาน OPD (ครั้ง/เดือน)</label>
-                                <input type="number" id="admin-pre-opd" class="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-pink-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-600 mb-1">จำนวนรายงาน IPD (ครั้ง/เดือน)</label>
-                                <input type="number" id="admin-pre-ipd" class="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-pink-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-600 mb-1">ระยะเวลาเฉลี่ยบันทึกรายงาน (ชั่วโมง)</label>
-                                <input type="number" id="admin-pre-time" class="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-pink-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-600 mb-1">คุณภาพกรอกข้อมูลครบถ้วน (%)</label>
-                                <input type="number" id="admin-pre-acc" class="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-pink-500 outline-none">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- Pre-test Setup -->
+                        <div class="bg-gray-50/50 p-6 rounded-3xl border border-gray-200/60">
+                            <h3 class="font-bold text-gray-800 mb-5 flex items-center"><span class="w-2 h-2 rounded-full bg-pink-500 mr-2"></span> ระบบเดิม (Baseline / Pre-test)</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">จำนวนรายงาน OPD (ครั้ง/เดือน)</label>
+                                    <input type="number" id="admin-pre-opd" class="w-full p-3 rounded-xl border border-gray-200 bg-white focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none transition-all font-mono">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">จำนวนรายงาน IPD (ครั้ง/เดือน)</label>
+                                    <input type="number" id="admin-pre-ipd" class="w-full p-3 rounded-xl border border-gray-200 bg-white focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none transition-all font-mono">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">ระยะเวลาเฉลี่ยบันทึก (ชั่วโมง)</label>
+                                    <input type="number" id="admin-pre-time" class="w-full p-3 rounded-xl border border-gray-200 bg-white focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none transition-all font-mono">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">คุณภาพข้อมูลครบถ้วน (%)</label>
+                                    <input type="number" id="admin-pre-acc" class="w-full p-3 rounded-xl border border-gray-200 bg-white focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none transition-all font-mono">
+                                </div>
                             </div>
                         </div>
 
-                        <!-- ฝั่ง Post-test -->
-                        <div class="space-y-4 p-5 bg-emerald-50/50 rounded-2xl border border-emerald-100">
-                            <h3 class="font-bold text-emerald-700 border-b border-emerald-200 pb-2">สถิติระบบใหม่ (Smart Dashboard / Post-test)</h3>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-600 mb-1">จำนวนรายงาน OPD (ครั้ง/เดือน)</label>
-                                <input type="number" id="admin-post-opd" class="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-600 mb-1">จำนวนรายงาน IPD (ครั้ง/เดือน)</label>
-                                <input type="number" id="admin-post-ipd" class="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-600 mb-1">ระยะเวลาเฉลี่ยบันทึกรายงาน (ชั่วโมง)</label>
-                                <input type="number" id="admin-post-time" class="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-600 mb-1">คุณภาพกรอกข้อมูลครบถ้วน (%)</label>
-                                <input type="number" id="admin-post-acc" class="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 outline-none">
+                        <!-- Post-test Setup -->
+                        <div class="bg-gray-50/50 p-6 rounded-3xl border border-gray-200/60">
+                            <h3 class="font-bold text-gray-800 mb-5 flex items-center"><span class="w-2 h-2 rounded-full bg-emerald-500 mr-2"></span> ระบบใหม่ (Smart Dashboard)</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">จำนวนรายงาน OPD (ครั้ง/เดือน)</label>
+                                    <input type="number" id="admin-post-opd" class="w-full p-3 rounded-xl border border-gray-200 bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all font-mono">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">จำนวนรายงาน IPD (ครั้ง/เดือน)</label>
+                                    <input type="number" id="admin-post-ipd" class="w-full p-3 rounded-xl border border-gray-200 bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all font-mono">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">ระยะเวลาเฉลี่ยบันทึก (ชั่วโมง)</label>
+                                    <input type="number" id="admin-post-time" class="w-full p-3 rounded-xl border border-gray-200 bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all font-mono">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">คุณภาพข้อมูลครบถ้วน (%)</label>
+                                    <input type="number" id="admin-post-acc" class="w-full p-3 rounded-xl border border-gray-200 bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all font-mono">
+                                </div>
                             </div>
                         </div>
                     </div>
                     
-                    <button onclick="saveAdminStats()" class="mt-6 bg-pink-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-pink-600 transition-all duration-200 text-sm shadow-md">
-                        <i class="fa-solid fa-save mr-2"></i>อัปเดตข้อมูลขึ้น Dashboard
+                    <button onclick="saveAdminStats()" class="mt-8 bg-gray-900 text-white font-bold py-3.5 px-8 rounded-xl hover:bg-gray-800 transition-all duration-300 shadow-lg shadow-gray-200 flex items-center">
+                        <i class="fa-solid fa-cloud-arrow-up mr-2 text-pink-400"></i> อัปเดตข้อมูลขึ้น Dashboard
                     </button>
                 </div>
 
-                <!-- ตั้งค่าการส่งข้อมูลไปยัง Google Apps Script -->
-                <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-xl border border-pink-50">
-                    <h2 class="text-xl font-extrabold text-gray-800 mb-4"><i class="fa-solid fa-gears text-pink-500 mr-2"></i>การตั้งค่าการเชื่อมต่อ Google Sheets</h2>
-                    <div class="space-y-4">
+                <!-- Google Sheets Settings -->
+                <div class="bg-white/95 backdrop-blur-md p-8 rounded-[2rem] shadow-xl shadow-gray-200/50 border border-white">
+                    <div class="flex items-center mb-6 border-b border-gray-100 pb-5">
+                        <div class="bg-yellow-100 p-3 rounded-xl mr-4"><i class="fa-brands fa-google-drive text-yellow-600 text-xl"></i></div>
                         <div>
-                            <label for="gas-url" class="block text-sm font-bold text-gray-700 mb-1">Google Sheets Web App URL (GAS URL):</label>
-                            <input type="text" id="gas-url" class="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm font-mono" placeholder="https://script.google.com/macros/s/.../exec">
+                            <h2 class="text-xl font-extrabold text-gray-800">การเชื่อมต่อ Google Sheets</h2>
+                            <p class="text-sm text-gray-500">ตั้งค่า Web App URL สำหรับการบันทึกข้อมูลทางไกล</p>
                         </div>
-                        <button onclick="saveGasUrl()" class="bg-pink-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-pink-600 transition-all duration-200 text-sm">
-                            <i class="fa-solid fa-link mr-2"></i>บันทึกการตั้งค่าลิงก์เชื่อมต่อ
+                    </div>
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <div class="relative flex-1">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-link text-gray-400"></i>
+                            </div>
+                            <input type="text" id="gas-url" class="w-full pl-11 pr-4 py-4 rounded-xl border-2 border-gray-100 bg-gray-50 focus:bg-white focus:border-pink-400 focus:ring-4 focus:ring-pink-100 outline-none transition-all font-mono text-sm" placeholder="https://script.google.com/macros/s/.../exec">
+                        </div>
+                        <button onclick="saveGasUrl()" class="bg-white border-2 border-gray-900 text-gray-900 font-bold py-4 px-8 rounded-xl hover:bg-gray-900 hover:text-white transition-all duration-300 whitespace-nowrap">
+                            บันทึก URL
                         </button>
                     </div>
                 </div>
 
-                <!-- จัดการข้อมูลและเครื่องมือส่งออก -->
-                <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-xl border border-pink-50">
-                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-                        <h2 class="text-xl font-extrabold text-gray-800"><i class="fa-solid fa-database text-pink-500 mr-2"></i>รายการข้อมูลดิบที่ถูกบันทึก (ระบบจำลอง LocalStorage)</h2>
-                        <div class="flex space-x-2">
-                            <button onclick="exportDataToCsv()" class="bg-emerald-500 text-white font-semibold py-2 px-4 rounded-xl hover:bg-emerald-600 transition-all text-sm">
-                                <i class="fa-solid fa-file-csv mr-1"></i>ส่งออกไฟล์ CSV
+                <!-- Raw Data Table -->
+                <div class="bg-white/95 backdrop-blur-md p-8 rounded-[2rem] shadow-xl shadow-gray-200/50 border border-white">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b border-gray-100 pb-5 gap-4">
+                        <div class="flex items-center">
+                            <div class="bg-rose-100 p-3 rounded-xl mr-4"><i class="fa-solid fa-database text-rose-600 text-xl"></i></div>
+                            <div>
+                                <h2 class="text-xl font-extrabold text-gray-800">ฐานข้อมูลจำลอง (Local Storage)</h2>
+                                <p class="text-sm text-gray-500">ข้อมูลดิบที่ถูกบันทึกไว้ในเบราว์เซอร์นี้</p>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2 w-full sm:w-auto">
+                            <button onclick="exportDataToCsv()" class="flex-1 sm:flex-none flex justify-center items-center bg-emerald-50 text-emerald-600 border border-emerald-200 font-bold py-2.5 px-4 rounded-xl hover:bg-emerald-500 hover:text-white transition-all text-sm">
+                                <i class="fa-solid fa-file-csv mr-2"></i> ส่งออก CSV
                             </button>
-                            <button onclick="clearSystemData()" class="bg-rose-500 text-white font-semibold py-2 px-4 rounded-xl hover:bg-rose-600 transition-all text-sm">
-                                <i class="fa-solid fa-trash mr-1"></i>ล้างข้อมูล
+                            <button onclick="clearSystemData()" class="flex-1 sm:flex-none flex justify-center items-center bg-rose-50 text-rose-600 border border-rose-200 font-bold py-2.5 px-4 rounded-xl hover:bg-rose-500 hover:text-white transition-all text-sm">
+                                <i class="fa-solid fa-trash-can mr-2"></i> ล้างข้อมูล
                             </button>
                         </div>
                     </div>
-                    <div class="overflow-x-auto rounded-xl border border-gray-100">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="bg-pink-50 text-pink-900 border-b border-pink-100 text-xs sm:text-sm">
-                                    <th class="p-3 sm:p-4 font-bold">รหัสผู้ตอบ</th>
-                                    <th class="p-3 sm:p-4 font-bold">ประเภทฟอร์ม</th>
-                                    <th class="p-3 sm:p-4 font-bold">วันและเวลา</th>
-                                    <th class="p-3 sm:p-4 font-bold">วิชาชีพ</th>
-                                    <th class="p-3 sm:p-4 font-bold">แผนก</th>
-                                    <th class="p-3 sm:p-4 font-bold">ยินยอม</th>
-                                </tr>
-                            </thead>
-                            <tbody id="raw-data-table-body" class="text-xs sm:text-sm text-gray-600 divide-y divide-gray-100">
-                                <!-- แถวของข้อมูลดิบจะถูกประมวลผลตรงนี้ -->
-                            </tbody>
-                        </table>
+                    
+                    <div class="overflow-hidden rounded-2xl border border-gray-200 shadow-sm">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse whitespace-nowrap">
+                                <thead>
+                                    <tr class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider border-b border-gray-200">
+                                        <th class="p-4 font-black">รหัสผู้ตอบ</th>
+                                        <th class="p-4 font-black">ประเภท</th>
+                                        <th class="p-4 font-black">วัน-เวลา</th>
+                                        <th class="p-4 font-black">วิชาชีพ</th>
+                                        <th class="p-4 font-black">แผนก</th>
+                                        <th class="p-4 font-black text-center">สถานะ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="raw-data-table-body" class="text-sm text-gray-700 divide-y divide-gray-100">
+                                    <!-- Table Rows Injected Here -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -321,13 +461,14 @@
 
     </main>
 
-    <footer class="text-center py-12 text-gray-400 text-xs sm:text-sm">
-        <p>© 2026 การวิจัยพัฒนาและทดสอบระบบรายงานความคลาดเคลื่อนทางยา - โรงพยาบาลกุดจับ</p>
+    <footer class="text-center pb-10 pt-4 text-gray-400 font-medium text-sm">
+        <p>© 2026 ระบบรายงานความคลาดเคลื่อนทางยา - โรงพยาบาลกุดจับ</p>
+        <p class="text-xs mt-1 opacity-70">Designed for better Medical Error Management.</p>
     </footer>
 
-    <!-- ส่วน Script โครงสร้างการทำงานทั้งหมดของระบบ -->
+    <!-- Script ควบคุมการทำงาน (คงฟังก์ชันเดิมทั้งหมด) -->
     <script>
-        // --- 1. ข้อมูลโครงสร้างแบบสอบถามทั้งหมด (ลบส่วนกรอกสถิติออกไปไว้ที่ Admin แล้ว) ---
+        // ข้อมูลโครงสร้างแบบสอบถามทั้งหมด 
         const demographics = {
             title: 'ส่วนที่ 1 ข้อมูลทั่วไป (ข้อมูลส่วนบุคคล)',
             type: 'radio',
@@ -350,22 +491,18 @@
                 title: 'ส่วนที่ 2 สภาพปัญหาและความต้องการ (1=น้อยที่สุด, 5=มากที่สุด)', type: 'likert',
                 domains: [
                     {
-                        name: 'กลุ่มที่ 1 สภาพปัญหาของระบบรายงานเดิม (Pre2.1)',
-                        prefix: 'Pre2_',
-                        startIdx: 1,
+                        name: 'กลุ่มที่ 1 สภาพปัญหาของระบบรายงานเดิม (Pre2.1)', prefix: 'Pre2_', startIdx: 1,
                         questions: [
                             'ขั้นตอนในการรายงานความคลาดเคลื่อนทางยาในปัจจุบันมีความยุ่งยากซับซ้อน',
                             'การบันทึกรายงานด้วยกระดาษก่อนแล้วค่อยนำไปคีย์เข้าระบบภายหลังทำให้เสียเวลามาก',
                             'ระบบ NRLS ที่ใช้อยู่ในปัจจุบันใช้งานยากและต้องใช้เวลาในการบันทึกข้อมูลค่อนข้างนาน',
                             'ระบบรายงานในปัจจุบันไม่สามารถแจ้งเตือนผู้เกี่ยวข้องได้ทันทีในกรณีที่เกิดความคลาดเคลื่อนรุนแรง',
-                            'ผู้บริหารหรือทีมนำได้รับข้อมูลความคลาดเคลื่อนล่าช้าเกินไป ทำให้ไม่สามารถแก้ไขหรือป้องกันการเกิดเหตุซ้ำได้ทันท่วงที',
+                            'ผู้บริหารหรือทีมนำได้รับข้อมูลความคลาดเคลื่อนล่าช้าเกินไป ทำให้ไม่สามารถแก้ไขหรือป้องกันได้ทัน',
                             'ระบบรายงานในปัจจุบันไม่แสดงข้อมูลแนวโน้ม หรือสถิติความคลาดเคลื่อนแบบสรุปผลได้ในทันที'
                         ]
                     },
                     {
-                        name: 'กลุ่มที่ 2 สาเหตุที่ทำให้ผู้พบเหตุการณ์ไม่รายงานหรือไม่เขียนรายงาน (Pre2.2)',
-                        prefix: 'Pre2_',
-                        startIdx: 7,
+                        name: 'กลุ่มที่ 2 สาเหตุที่ทำให้ผู้พบเหตุการณ์ไม่รายงานหรือไม่เขียนรายงาน (Pre2.2)', prefix: 'Pre2_', startIdx: 7,
                         questions: [
                             'ท่านไม่รายงานเพราะกลัวว่าจะถูกตำหนิ ติเตียน หรือได้รับการลงโทษจากหัวหน้างานหรือฝ่ายบริหาร',
                             'ท่านไม่รายงานเพราะขั้นตอนในการรายงานมีมากและทำให้เสียเวลาในการปฏิบัติงานปกติ',
@@ -376,14 +513,12 @@
                         ]
                     },
                     {
-                        name: 'กลุ่มที่ 3 ความต้องการระบบรายงานความคลาดเคลื่อนทางยาที่พัฒนาขึ้นมาใหม่ (Pre2.3)',
-                        prefix: 'Pre2_',
-                        startIdx: 13,
+                        name: 'กลุ่มที่ 3 ความต้องการระบบรายงานความคลาดเคลื่อนทางยาที่พัฒนาขึ้นมาใหม่ (Pre2.3)', prefix: 'Pre2_', startIdx: 13,
                         questions: [
                             'ต้องการระบบรายงานที่สามารถรายงานได้ทันทีผ่านช่องทางที่สะดวกและเข้าถึงได้ง่าย',
                             'ต้องการระบบที่อนุญาตให้รายงานได้โดยไม่ต้องระบุชื่อหรือยืนยันตัวตนของผู้รายงาน',
-                            'ต้องการระบบที่สามารถส่งข้อความแจ้งเตือนอัตโนมัติผ่านทางโปรแกรม LINE เมื่อเกิดเหตุรุนแรงขึ้นทันที',
-                            'ต้องการระบบที่แสดงสถิติและแนวโน้มการเกิดความคลาดเคลื่อนทางยาในรูปแบบ Dashboard ทันที',
+                            'ต้องการระบบที่สามารถส่งข้อความแจ้งเตือนอัตโนมัติผ่านทางโปรแกรม LINE เมื่อเกิดเหตุรุนแรง',
+                            'ต้องการระบบที่แสดงสถิติและแนวโน้มความคลาดเคลื่อนในรูปแบบ Dashboard ทันที',
                             'ต้องการระบบที่ออกแบบให้สามารถใช้งานผ่านโทรศัพท์มือถือได้อย่างสะดวกและรวดเร็ว',
                             'ต้องการระบบที่เอื้อให้ผู้บริหารหรือผู้เกี่ยวข้องสามารถเข้าดูสถิติผลลัพธ์แบบ Near Real-Time ได้',
                             'ต้องการระบบที่มีการสรุปผลการรายงานประจำเดือนหรือประจำปีแบบอัตโนมัติ'
@@ -395,13 +530,12 @@
 
         const postTestConfig = [
             {
-                title: 'ส่วนที่ 1 ข้อมูลทั่วไป (ข้อมูลส่วนบุคคล)',
-                type: 'radio',
+                title: 'ส่วนที่ 1 ข้อมูลทั่วไป (ข้อมูลส่วนบุคคล)', type: 'radio',
                 questions: [
                     { id: 'Q1', text: '1. วิชาชีพ/ตำแหน่งปัจจุบันของท่านคืออะไร', options: ['เภสัชกร', 'พยาบาลวิชาชีพ', 'แพทย์', 'เจ้าพนักงานเภสัชกรรม', 'อื่น ๆ'] },
                     { id: 'Q2', text: '2. ท่านปฏิบัติงานอยู่ที่แผนก/หน่วยงานใด', options: ['ห้องยา/เภสัชกรรม', 'หอผู้ป่วยใน', 'ห้องฉุกเฉิน', 'ผู้ป่วยนอก', 'อื่น ๆ'] },
                     { id: 'Q3', text: '3. ท่านมีประสบการณ์ทำงานในโรงพยาบาลนานเท่าใด', options: ['น้อยกว่า 3 ปี', '3–5 ปี', '6–10 ปี', 'มากกว่า 10 ปี'] },
-                    { id: 'Q4', text: '4. ในช่วง 4 สัปดาห์ที่ผ่านมา ท่านเคยบันทึกข้อมูลรายงานความคลาดเคลื่อนทางยาผ่าน Smart Dashboard กี่ครั้ง', options: ['ไม่เคยรายงาน', 'เคยรายงาน 1–5 ครั้ง', 'เคยรายงาน 6–10 ครั้ง', 'เคยรายงานมากกว่า 10 ครั้ง'] },
+                    { id: 'Q4', text: '4. ในช่วง 4 สัปดาห์ที่ผ่านมา ท่านเคยบันทึกข้อมูลรายงานความคลาดเคลื่อนผ่านระบบใหม่กี่ครั้ง', options: ['ไม่เคยรายงาน', 'เคยรายงาน 1–5 ครั้ง', 'เคยรายงาน 6–10 ครั้ง', 'เคยรายงานมากกว่า 10 ครั้ง'] },
                     { id: 'Q5', text: '5. ท่านมีความคุ้นเคยกับการใช้งานระบบ Smart Dashboard ในการทำงานในระดับใด', options: ['น้อยมาก (1)', 'น้อย (2)', 'ปานกลาง (3)', 'มาก (4)', 'มากที่สุด (5)'] }
                 ]
             },
@@ -409,9 +543,7 @@
                 title: 'ส่วนที่ 2 การประเมินประสิทธิภาพและประโยชน์การใช้งาน (1=เห็นด้วยน้อยที่สุด, 5=เห็นด้วยมากที่สุด)', type: 'likert',
                 domains: [
                     {
-                        name: 'กลุ่มที่ 1 ด้านความรวดเร็วในการจัดสรรข้อมูล (Efficiency - P2.1)',
-                        prefix: 'P2_',
-                        startIdx: 1,
+                        name: 'กลุ่มที่ 1 ด้านความรวดเร็วในการจัดสรรข้อมูล (Efficiency - P2.1)', prefix: 'P2_', startIdx: 1,
                         questions: [
                             'ท่านสามารถบันทึกรายงานความคลาดเคลื่อนทางยาผ่านระบบได้อย่างรวดเร็ว',
                             'ระบบแสดงผลสถิติและกราฟแนวโน้มได้ทันทีหลังบันทึกข้อมูล',
@@ -421,9 +553,7 @@
                         ]
                     },
                     {
-                        name: 'กลุ่มที่ 2 ด้านความครบถ้วนสมบูรณ์ของระบบข้อมูล (Efficiency - P2.2)',
-                        prefix: 'P2_',
-                        startIdx: 6,
+                        name: 'กลุ่มที่ 2 ด้านความครบถ้วนสมบูรณ์ของระบบข้อมูล (Efficiency - P2.2)', prefix: 'P2_', startIdx: 6,
                         questions: [
                             'แบบฟอร์มในระบบครอบคลุมข้อมูลที่จำเป็นสำหรับการรายงานความคลาดเคลื่อนทางยาครบถ้วน',
                             'ระบบแสดงข้อมูลสถิติความคลาดเคลื่อนจำแนกตามประเภทและหอผู้ป่วยได้ครบถ้วน',
@@ -433,9 +563,7 @@
                         ]
                     },
                     {
-                        name: 'กลุ่มที่ 3 ความถูกต้องแม่นยำด้านเทคโนโลยี AI (Efficiency - P2.3)',
-                        prefix: 'P2_',
-                        startIdx: 11,
+                        name: 'กลุ่มที่ 3 ความถูกต้องแม่นยำด้านเทคโนโลยี AI (Efficiency - P2.3)', prefix: 'P2_', startIdx: 11,
                         questions: [
                             'ระบบ AI จำแนกประเภทความคลาดเคลื่อนทางยาได้ถูกต้องและแม่นยำ',
                             'ระบบ AI ประเมินระดับความรุนแรงตามเกณฑ์ NCC MERP ได้ถูกต้อง',
@@ -450,9 +578,7 @@
                 title: 'ส่วนที่ 3 การยอมรับเทคโนโลยีระบบประเมินผล (TAM) (1=เห็นด้วยน้อยที่สุด, 5=เห็นด้วยมากที่สุด)', type: 'likert',
                 domains: [
                     {
-                        name: 'กลุ่มที่ 1 ด้านความง่ายในการใช้งานระบบ (Perceived Ease of Use - S3.1)',
-                        prefix: 'P3_',
-                        startIdx: 1,
+                        name: 'กลุ่มที่ 1 ด้านความง่ายในการใช้งานระบบ (Perceived Ease of Use - S3.1)', prefix: 'P3_', startIdx: 1,
                         questions: [
                             'ขั้นตอนการใช้งานระบบรายงานผ่าน Smart Dashboard มีความง่ายและไม่ซับซ้อน',
                             'ท่านสามารถรายงานความคลาดเคลื่อนได้โดยไม่ต้องขอความช่วยเหลือจากผู้อื่น',
@@ -462,9 +588,7 @@
                         ]
                     },
                     {
-                        name: 'กลุ่มที่ 2 ด้านประโยชน์ต่อระบบงาน (Perceived Usefulness - S3.2)',
-                        prefix: 'P3_',
-                        startIdx: 6,
+                        name: 'กลุ่มที่ 2 ด้านประโยชน์ต่อระบบงาน (Perceived Usefulness - S3.2)', prefix: 'P3_', startIdx: 6,
                         questions: [
                             'ระบบนี้ทำให้การรายงานความคลาดเคลื่อนทางยาเป็นไปได้มากขึ้นและสะดวกขึ้น',
                             'ระบบช่วยให้ผู้เกี่ยวข้องตระหนักถึงความเสี่ยงและแนวโน้มปัญหาได้เร็วขึ้น',
@@ -474,9 +598,7 @@
                         ]
                     },
                     {
-                        name: 'กลุ่มที่ 3 ด้านความเหมาะสมเชิงบริบทงานโรงพยาบาลชุมชน (Contextual Fit - S3.3)',
-                        prefix: 'P3_',
-                        startIdx: 11,
+                        name: 'กลุ่มที่ 3 ด้านความเหมาะสมเชิงบริบทงาน (Contextual Fit - S3.3)', prefix: 'P3_', startIdx: 11,
                         questions: [
                             'ระบบ Smart Dashboard มีการออกแบบที่สอดคล้องกับบริบทการทำงานจริงของหน่วยงานท่าน',
                             'เกณฑ์การคัดกรองและการแจ้งเตือนมีความสอดคล้องกับสภาพปัญหาจริงในพื้นที่',
@@ -486,9 +608,7 @@
                         ]
                     },
                     {
-                        name: 'กลุ่มที่ 4 ความตั้งใจเชิงพฤติกรรมการใช้งานในอนาคต (Behavioral Intention - S3.4)',
-                        prefix: 'P3_',
-                        startIdx: 16,
+                        name: 'กลุ่มที่ 4 ความตั้งใจเชิงพฤติกรรมการใช้งานในอนาคต (Behavioral Intention - S3.4)', prefix: 'P3_', startIdx: 16,
                         questions: [
                             'ท่านมีความตั้งใจที่จะรายงานความคลาดเคลื่อนทางยาผ่านระบบ Smart Dashboard ต่อไปในอนาคต',
                             'ท่านจะแนะนำให้เพื่อนร่วมงานใช้ระบบ Smart Dashboard แทนระบบรายงานเดิม',
@@ -500,13 +620,10 @@
                 ]
             },
             {
-                title: 'ส่วนที่ 4 ด้านวัฒนธรรมความปลอดภัยของผู้ป่วย (Safety Culture) (1=เห็นด้วยน้อยที่สุด, 5=เห็นด้วยมากที่สุด)',
-                type: 'likert',
+                title: 'ส่วนที่ 4 ด้านวัฒนธรรมความปลอดภัยของผู้ป่วย (Safety Culture)', type: 'likert',
                 domains: [
                     {
-                        name: 'กลุ่มวัฒนธรรมความปลอดภัยของผู้ป่วย (Safety Culture - P4b)',
-                        prefix: 'P4b_',
-                        startIdx: 1,
+                        name: 'กลุ่มวัฒนธรรมความปลอดภัยของผู้ป่วย (Safety Culture - P4b)', prefix: 'P4b_', startIdx: 1,
                         questions: [
                             'ระบบ Smart Dashboard ทำให้ท่านกล้าเขียนรายงานความคลาดเคลื่อนทางยามากขึ้นกว่าเดิม',
                             'เพื่อนร่วมงานในหน่วยงานของท่านให้ความสำคัญและรายงานบ่อยขึ้นหลังการใช้ระบบนี้',
@@ -518,43 +635,39 @@
             }
         ];
 
-        // --- 2. ฟังก์ชันการเปลี่ยนแท็บเมนูและการจัดการสเตทหลัก ---
-        let currentType = 'pre'; // เริ่มต้นที่ Pre-Test
+        let currentType = 'pre'; 
         let responses = JSON.parse(localStorage.getItem('kutchap_data')) || [];
 
         window.onload = function() {
-            // โหลดสแกน URL Google Apps Script จาก LocalStorage
             const storedUrl = localStorage.getItem('kutchap_gas_url');
-            if(storedUrl) {
-                document.getElementById('gas-url').value = storedUrl;
-            } else {
-                document.getElementById('gas-url').value = "";
-            }
+            if(storedUrl) document.getElementById('gas-url').value = storedUrl;
 
-            // โหลดสถิติงานวิจัยสำหรับ Admin
             loadAdminStats();
-
             renderQuestions();
             updateDashboardData();
             updateAdminTable();
         };
 
         function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById(tabId).classList.remove('hidden');
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('fade-in'); 
+            });
+            
+            const activeTab = document.getElementById(tabId);
+            activeTab.classList.remove('hidden');
+            // Trigger reflow to restart animation
+            void activeTab.offsetWidth; 
+            activeTab.classList.add('fade-in');
 
             document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('bg-pink-500', 'text-white', 'shadow-md', 'shadow-pink-200');
-                btn.classList.add('text-gray-600', 'hover:bg-pink-50');
+                btn.className = 'tab-btn flex-1 md:flex-none px-4 md:px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 text-gray-500 hover:text-gray-800 hover:bg-white/50';
             });
 
             const activeBtn = document.getElementById(`btn-${tabId}`);
-            activeBtn.classList.remove('text-gray-600', 'hover:bg-pink-50');
-            activeBtn.classList.add('bg-pink-500', 'text-white', 'shadow-md', 'shadow-pink-200');
+            activeBtn.className = 'tab-btn flex-1 md:flex-none px-4 md:px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 bg-white text-pink-600 shadow-sm border border-black/5';
 
-            if(tabId === 'dashboard-tab') {
-                updateDashboardData();
-            }
+            if(tabId === 'dashboard-tab') updateDashboardData();
         }
 
         function selectFormType(type) {
@@ -563,26 +676,27 @@
             const postBtn = document.getElementById('select-post-btn');
 
             if(type === 'pre') {
-                preBtn.classList.add('bg-white', 'text-pink-600', 'shadow-sm');
-                preBtn.classList.remove('text-gray-500');
-                postBtn.classList.remove('bg-white', 'text-pink-600', 'shadow-sm');
-                postBtn.classList.add('text-gray-500');
+                preBtn.className = 'flex-1 py-3 text-sm sm:text-base font-bold rounded-xl transition-all duration-300 bg-white text-pink-600 shadow-sm border border-gray-200/50';
+                postBtn.className = 'flex-1 py-3 text-sm sm:text-base font-bold rounded-xl transition-all duration-300 text-gray-500 hover:text-gray-800';
             } else {
-                postBtn.classList.add('bg-white', 'text-pink-600', 'shadow-sm');
-                postBtn.classList.remove('text-gray-500');
-                preBtn.classList.remove('bg-white', 'text-pink-600', 'shadow-sm');
-                preBtn.classList.add('text-gray-500');
+                postBtn.className = 'flex-1 py-3 text-sm sm:text-base font-bold rounded-xl transition-all duration-300 bg-white text-pink-600 shadow-sm border border-gray-200/50';
+                preBtn.className = 'flex-1 py-3 text-sm sm:text-base font-bold rounded-xl transition-all duration-300 text-gray-500 hover:text-gray-800';
             }
 
-            renderQuestions();
+            // Animate form container
+            const container = document.getElementById('survey-questions-container');
+            container.style.opacity = '0';
+            setTimeout(() => {
+                renderQuestions();
+                container.style.transition = 'opacity 0.4s ease';
+                container.style.opacity = '1';
+            }, 150);
         }
 
-        // --- 3. ฟังก์ชันสร้างข้อคำถามแบบ Dynamic ---
         function renderQuestions() {
             const container = document.getElementById('survey-questions-container');
             container.innerHTML = '';
             
-            // สร้างรหัสผู้ตอบแบบสอบถามโดยอัตโนมัติ
             const currentPrefix = currentType === 'pre' ? 'PRE' : 'POST';
             const currentList = responses.filter(r => r.FormType === (currentType === 'pre' ? 'Pre-Test' : 'Post-Test'));
             const nextNumber = String(currentList.length + 1).padStart(3, '0');
@@ -593,27 +707,33 @@
 
             config.forEach((sec, sIdx) => {
                 const sectionDiv = document.createElement('div');
-                sectionDiv.className = 'bg-white p-6 rounded-2xl border border-pink-100 shadow-sm space-y-6';
+                sectionDiv.className = 'bg-white p-6 sm:p-10 rounded-[2rem] border border-gray-100 shadow-sm space-y-8 relative overflow-hidden';
+                
+                // Add subtle top accent line
+                const accentLine = document.createElement('div');
+                accentLine.className = 'absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-pink-300 to-rose-300';
+                sectionDiv.appendChild(accentLine);
 
                 const titleH2 = document.createElement('h3');
-                titleH2.className = 'text-lg font-bold text-gray-800 border-b border-pink-50 pb-3 flex items-center';
-                titleH2.innerHTML = `<span class="bg-pink-100 text-pink-700 w-6 h-6 rounded-full flex items-center justify-center text-xs mr-3 font-extrabold">${sIdx+1}</span> ${sec.title}`;
+                titleH2.className = 'text-lg sm:text-xl font-extrabold text-gray-800 flex items-center mb-6';
+                titleH2.innerHTML = `<span class="bg-gradient-to-br from-pink-500 to-rose-500 text-white w-8 h-8 rounded-xl flex items-center justify-center text-sm mr-4 shadow-md font-black">${sIdx+1}</span> ${sec.title}`;
                 sectionDiv.appendChild(titleH2);
 
                 if (sec.type === 'radio') {
                     sec.questions.forEach(q => {
                         const qDiv = document.createElement('div');
-                        qDiv.className = 'space-y-3';
-                        qDiv.innerHTML = `<p class="font-semibold text-gray-700">${q.text} <span class="text-rose-500">*</span></p>`;
+                        qDiv.className = 'space-y-4';
+                        qDiv.innerHTML = `<p class="font-bold text-gray-700 text-base sm:text-lg">${q.text} <span class="text-rose-500">*</span></p>`;
 
                         const optDiv = document.createElement('div');
-                        optDiv.className = 'grid grid-cols-1 sm:grid-cols-2 gap-3';
+                        optDiv.className = 'grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4';
 
                         q.options.forEach((opt, oIdx) => {
+                            // UI Improved Radio buttons
                             optDiv.innerHTML += `
-                                <label class="flex items-center p-3 rounded-xl border border-gray-100 hover:border-pink-300 hover:bg-pink-50/50 cursor-pointer transition-all">
-                                    <input type="radio" name="${q.id}" value="${oIdx+1}" class="w-4 h-4 text-pink-600 border-gray-300 focus:ring-pink-500 accent-pink-500" required>
-                                    <span class="ml-3 text-sm text-gray-600">${opt}</span>
+                                <label class="radio-container relative flex items-center p-4 rounded-2xl border-2 border-gray-100 cursor-pointer hover:bg-gray-50 hover:border-gray-200">
+                                    <input type="radio" name="${q.id}" value="${oIdx+1}" class="w-5 h-5 text-pink-500 bg-gray-100 border-gray-300 focus:ring-pink-500 focus:ring-2" required>
+                                    <span class="radio-text ml-3 text-sm sm:text-base font-medium text-gray-600">${opt}</span>
                                 </label>
                             `;
                         });
@@ -623,27 +743,27 @@
                 } else if (sec.type === 'likert') {
                     sec.domains.forEach(dom => {
                         const domDiv = document.createElement('div');
-                        domDiv.className = 'space-y-4 pt-3';
-                        domDiv.innerHTML = `<h4 class="font-bold text-pink-700 text-sm bg-pink-50/70 p-2 rounded-lg"><i class="fa-solid fa-folder-open mr-2"></i>${dom.name}</h4>`;
+                        domDiv.className = 'space-y-4 pt-4';
+                        domDiv.innerHTML = `<h4 class="font-bold text-pink-600 text-sm sm:text-base bg-pink-50/50 p-3 rounded-xl border border-pink-100"><i class="fa-solid fa-layer-group mr-2"></i>${dom.name}</h4>`;
 
                         dom.questions.forEach((qText, qIdx) => {
                             const exactNum = dom.startIdx + qIdx;
                             const fieldId = `${dom.prefix}${exactNum}`;
                             
                             const itemDiv = document.createElement('div');
-                            itemDiv.className = 'p-4 sm:p-5 rounded-2xl hover:bg-pink-50/30 transition-all border border-transparent hover:border-pink-100 mb-2';
+                            itemDiv.className = 'p-5 sm:p-6 rounded-2xl bg-gray-50/50 hover:bg-white border-2 border-transparent hover:border-pink-100 hover:shadow-lg hover:shadow-pink-100/30 transition-all duration-300 mb-3';
                             itemDiv.innerHTML = `
-                                <div class="flex flex-col lg:flex-row justify-between lg:items-center gap-4">
-                                    <span class="text-gray-700 text-sm sm:text-base flex-1 font-medium leading-relaxed">${exactNum}. ${qText} <span class="text-rose-500">*</span></span>
-                                    <div class="flex items-center justify-between w-full lg:w-auto sm:justify-start gap-1 sm:gap-2">
-                                        <span class="text-xs text-gray-400 mr-1 sm:mr-3 hidden sm:inline-block">น้อยสุด</span>
+                                <div class="flex flex-col xl:flex-row justify-between xl:items-center gap-6">
+                                    <span class="text-gray-700 text-sm sm:text-base flex-1 font-semibold leading-relaxed">${exactNum}. ${qText} <span class="text-rose-500">*</span></span>
+                                    <div class="flex items-center justify-between w-full xl:w-auto sm:justify-start gap-2">
+                                        <span class="text-xs font-bold text-gray-400 mr-2 hidden sm:inline-block uppercase tracking-wider">น้อย</span>
                                         ${[1,2,3,4,5].map(v => `
-                                            <label class="likert-btn w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl text-sm sm:text-base">
+                                            <label class="likert-btn w-12 h-12 sm:w-14 sm:h-14 rounded-2xl text-base sm:text-lg">
                                                 <input type="radio" name="${fieldId}" value="${v}" required>
                                                 ${v}
                                             </label>
                                         `).join('')}
-                                        <span class="text-xs text-gray-400 ml-1 sm:ml-3 hidden sm:inline-block">มากสุด</span>
+                                        <span class="text-xs font-bold text-gray-400 ml-2 hidden sm:inline-block uppercase tracking-wider">มาก</span>
                                     </div>
                                 </div>
                             `;
@@ -651,38 +771,30 @@
                         });
                         sectionDiv.appendChild(domDiv);
                     });
-                } else if (sec.type === 'numerical') {
+                }
                 container.appendChild(sectionDiv);
             });
         }
 
-        // --- 4. ฟังก์ชันการจัดการฟอร์มเมื่อกดบันทึกและส่งข้อมูล ---
         function handleFormSubmit(event) {
             event.preventDefault();
 
             const formElement = document.getElementById('researchForm');
             const dataObj = new FormData(formElement);
             let formData = {};
+            for (let [key, val] of dataObj.entries()) { formData[key] = val; }
 
-            for (let [key, val] of dataObj.entries()) {
-                formData[key] = val;
-            }
-
-            // ตรวจทานว่าตอบข้อสอบครบถ้วนหรือไม่
+            // Validate answers
             const config = currentType === 'pre' ? preTestConfig : postTestConfig;
             let missing = false;
 
             config.forEach(sec => {
                 if(sec.type === 'radio') {
-                    sec.questions.forEach(q => {
-                        if(!formData[q.id]) missing = true;
-                    });
+                    sec.questions.forEach(q => { if(!formData[q.id]) missing = true; });
                 } else if (sec.type === 'likert') {
                     sec.domains.forEach(dom => {
                         dom.questions.forEach((_, qIdx) => {
-                            const exactNum = dom.startIdx + qIdx;
-                            const fieldId = `${dom.prefix}${exactNum}`;
-                            if(!formData[fieldId]) missing = true;
+                            if(!formData[`${dom.prefix}${dom.startIdx + qIdx}`]) missing = true;
                         });
                     });
                 }
@@ -691,7 +803,7 @@
             if(missing) {
                 return Swal.fire({
                     icon: 'warning',
-                    title: 'ข้อมูลไม่ครบถ้วน',
+                    title: 'กรอกข้อมูลไม่ครบถ้วน',
                     text: 'กรุณาตอบคำถามให้ครบทุกข้อ (โปรดเลื่อนดูจุดที่ยังไม่ได้เลือก)',
                     confirmButtonColor: '#ec4899',
                     customClass: { popup: 'rounded-3xl' }
@@ -699,9 +811,9 @@
             }
 
             const now = new Date();
-            
-            // --- แปลงค่าข้อมูลทั่วไป Q1-Q5 ให้เป็น ตัวเลข_ข้อความ ก่อนยิงไปชีท ---
             let finalData = { ...formData };
+            
+            // Map Radio values
             const mapQ1 = { "1": "1_เภสัชกร", "2": "2_พยาบาลวิชาชีพ", "3": "3_แพทย์", "4": "4_เจ้าพนักงานเภสัชกรรม", "5": "5_อื่น ๆ" };
             const mapQ2 = { "1": "1_ห้องยา/เภสัชกรรม", "2": "2_หอผู้ป่วยใน", "3": "3_ห้องฉุกเฉิน", "4": "4_ผู้ป่วยนอก", "5": "5_อื่น ๆ" };
             const mapQ3 = { "1": "1_น้อยกว่า 3 ปี", "2": "2_3–5 ปี", "3": "3_6–10 ปี", "4": "4_มากกว่า 10 ปี" };
@@ -721,18 +833,17 @@
             finalData['id'] = document.getElementById('display-run-id').innerText;
             finalData['FormType'] = currentType === 'pre' ? 'Pre-Test' : 'Post-Test';
 
-            // บันทึกเข้าคลัง LocalStorage ทันที
             responses.push({...finalData});
             localStorage.setItem('kutchap_data', JSON.stringify(responses));
 
             const gasUrl = document.getElementById('gas-url').value;
             if(gasUrl) {
                 Swal.fire({
-                    title: 'กำลังบันทึกข้อมูล...',
-                    html: 'โปรดรอสักครู่ ระบบกำลังนำส่งข้อมูลไปยัง Google Sheets แยกชีทอัตโนมัติ',
+                    title: 'กำลังส่งข้อมูล...',
+                    html: 'ระบบกำลังนำส่งข้อมูลเข้าสู่คลังวิจัย',
                     allowOutsideClick: false,
                     didOpen: () => Swal.showLoading(),
-                    customClass: { popup: 'rounded-3xl' }
+                    customClass: { popup: 'rounded-[2rem]' }
                 });
 
                 fetch(gasUrl, {
@@ -751,79 +862,70 @@
         function finishSubmit(gasError) {
             Swal.fire({
                 icon: gasError ? 'warning' : 'success',
-                title: gasError ? 'บันทึกสำเร็จ (เฉพาะ Local)' : 'บันทึกข้อมูลแบบสอบถามสำเร็จ!',
-                text: gasError ? 'บันทึกข้อมูลเข้าจำลองในเครื่องแล้ว แต่การเชื่อมต่อไปยัง Google Sheets ขัดข้อง กรุณาตรวจสอบลิงก์ในระบบ Admin' : 'ข้อมูลได้รับการบันทึกแยกชีทบนคลาวด์เรียบร้อยแล้ว ขอบคุณสำหรับการให้ข้อมูล',
+                title: gasError ? 'บันทึกสำเร็จ (Offline Mode)' : 'ส่งแบบสอบถามสำเร็จ!',
+                text: gasError ? 'บันทึกข้อมูลจำลองในเครื่องแล้ว แต่การส่งไป Google Sheets ขัดข้อง' : 'ข้อมูลได้รับการบันทึกบนระบบคลาวด์เรียบร้อยแล้ว ขอบคุณสำหรับความร่วมมือ',
                 confirmButtonColor: '#ec4899',
-                confirmButtonText: 'ตกลง',
-                customClass: { popup: 'rounded-3xl' }
+                customClass: { popup: 'rounded-[2rem]' }
             }).then(() => {
                 document.getElementById('suggestion').value = '';
                 document.getElementById('researchForm').reset();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
                 renderQuestions();
                 updateDashboardData();
                 updateAdminTable();
             });
         }
 
-        // --- 5. ฟังก์ชันวิเคราะห์คำนวณแดชบอร์ดสถิติ (Mean, S.D.) ---
+        // Analytics functions
         let resultChart = null;
 
         function updateDashboardData() {
             const preList = responses.filter(r => r.FormType === 'Pre-Test');
             const postList = responses.filter(r => r.FormType === 'Post-Test');
 
-            document.getElementById('stat-pre-count').innerText = `${preList.length} คน`;
-            document.getElementById('stat-post-count').innerText = `${postList.length} คน`;
+            document.getElementById('stat-pre-count').innerText = preList.length;
+            document.getElementById('stat-post-count').innerText = postList.length;
 
-            // คำนวณ Mean และ S.D. ฝั่ง Pre-test
             const preContainer = document.getElementById('pre-domain-stats');
             preContainer.innerHTML = '';
-            
             const preDomains = [
                 { name: 'ปัญหาระบบเดิม (P1-P6)', keys: ['Pre2_1', 'Pre2_2', 'Pre2_3', 'Pre2_4', 'Pre2_5', 'Pre2_6'] },
                 { name: 'สาเหตุไม่รายงาน (P7-P12)', keys: ['Pre2_7', 'Pre2_8', 'Pre2_9', 'Pre2_10', 'Pre2_11', 'Pre2_12'] },
                 { name: 'ความต้องการระบบใหม่ (P13-P19)', keys: ['Pre2_13', 'Pre2_14', 'Pre2_15', 'Pre2_16', 'Pre2_17', 'Pre2_18', 'Pre2_19'] }
             ];
-
             preDomains.forEach(dom => {
                 const stat = calculateMeanAndSD(preList, dom.keys);
-                preContainer.innerHTML += createStatRow(dom.name, stat.mean, stat.sd, 'bg-pink-500');
+                preContainer.innerHTML += createStatRow(dom.name, stat.mean, stat.sd, 'bg-gradient-to-r from-pink-400 to-pink-600', 'text-pink-600');
             });
 
-            // คำนวณ Mean และ S.D. ฝั่ง Post-test
             const postContainer = document.getElementById('post-domain-stats');
             postContainer.innerHTML = '';
-
             const postDomains = [
-                { name: 'ประสิทธิภาพระบบ: ด้านความรวดเร็ว (E1-E5)', keys: ['P2_1', 'P2_2', 'P2_3', 'P2_4', 'P2_5'] },
-                { name: 'ประสิทธิภาพระบบ: ด้านความสมบูรณ์ (E6-E10)', keys: ['P2_6', 'P2_7', 'P2_8', 'P2_9', 'P2_10'] },
-                { name: 'ประสิทธิภาพระบบ: ความถูกต้อง AI (E11-E15)', keys: ['P2_11', 'P2_12', 'P2_13', 'P2_14', 'P2_15'] },
-                { name: 'ความพึงพอใจการใช้ระบบ: TAM (S1-S20)', keys: Array.from({length: 20}, (_, i) => `P3_${i+1}`) },
-                { name: 'วัฒนธรรมความปลอดภัยของผู้ป่วย (C1-C4)', keys: ['P4b_1', 'P4b_2', 'P4b_3', 'P4b_4'] }
+                { name: 'ความรวดเร็วในการทำงาน (E1-E5)', keys: ['P2_1', 'P2_2', 'P2_3', 'P2_4', 'P2_5'] },
+                { name: 'ความสมบูรณ์ของข้อมูล (E6-E10)', keys: ['P2_6', 'P2_7', 'P2_8', 'P2_9', 'P2_10'] },
+                { name: 'ความถูกต้องแม่นยำ AI (E11-E15)', keys: ['P2_11', 'P2_12', 'P2_13', 'P2_14', 'P2_15'] },
+                { name: 'การยอมรับเทคโนโลยี TAM (S1-S20)', keys: Array.from({length: 20}, (_, i) => `P3_${i+1}`) },
+                { name: 'วัฒนธรรมความปลอดภัย (C1-C4)', keys: ['P4b_1', 'P4b_2', 'P4b_3', 'P4b_4'] }
             ];
-
             postDomains.forEach(dom => {
                 const stat = calculateMeanAndSD(postList, dom.keys);
-                postContainer.innerHTML += createStatRow(dom.name, stat.mean, stat.sd, 'bg-emerald-500');
+                postContainer.innerHTML += createStatRow(dom.name, stat.mean, stat.sd, 'bg-gradient-to-r from-emerald-400 to-teal-500', 'text-emerald-600');
             });
 
-            // อัปเดตแผนภูมิความก้าวหน้าประสิทธิภาพ
             renderComparisonChart();
         }
 
         function calculateMeanAndSD(list, keys) {
-            if(list.length === 0) return { mean: 0, sd: 0 };
+            if(list.length === 0) return { mean: 0.00.toFixed(2), sd: 0.00.toFixed(2) };
             
             let values = [];
             list.forEach(item => {
                 keys.forEach(k => {
-                    if(item[k] !== undefined) {
-                        values.push(parseFloat(item[k]));
-                    }
+                    if(item[k] !== undefined) values.push(parseFloat(item[k]));
                 });
             });
 
-            if(values.length === 0) return { mean: 0, sd: 0 };
+            if(values.length === 0) return { mean: 0.00.toFixed(2), sd: 0.00.toFixed(2) };
 
             const mean = values.reduce((sum, v) => sum + v, 0) / values.length;
             const variance = values.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / (values.length > 1 ? values.length - 1 : 1);
@@ -833,6 +935,7 @@
         }
 
         function getInterpretText(mean) {
+            if(mean == 0) return 'ยังไม่มีข้อมูล';
             if(mean >= 4.21) return 'เห็นด้วยมากที่สุด';
             if(mean >= 3.41) return 'เห็นด้วยมาก';
             if(mean >= 2.61) return 'เห็นด้วยปานกลาง';
@@ -840,26 +943,25 @@
             return 'เห็นด้วยน้อยที่สุด';
         }
 
-        function createStatRow(name, mean, sd, barColor) {
+        function createStatRow(name, mean, sd, bgGradient, textColor) {
             const pct = (mean / 5) * 100;
             return `
-                <div class="space-y-1.5 p-3 rounded-2xl hover:bg-gray-50 transition-all">
-                    <div class="flex justify-between text-xs sm:text-sm">
-                        <span class="font-bold text-gray-700">${name}</span>
-                        <span class="font-mono font-bold text-gray-800">Mean: ${mean} | S.D.: ${sd}</span>
+                <div class="space-y-2 p-4 rounded-2xl bg-gray-50/50 hover:bg-gray-100/80 transition-all border border-gray-100">
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-1">
+                        <span class="font-bold text-gray-700 text-sm">${name}</span>
+                        <span class="font-mono font-bold text-gray-800 text-sm bg-white px-2 py-0.5 rounded shadow-sm border border-gray-100">x̄: ${mean} | SD: ${sd}</span>
                     </div>
-                    <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
-                        <div class="${barColor} h-full rounded-full transition-all duration-1000" style="width: ${pct}%"></div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden shadow-inner">
+                        <div class="${bgGradient} h-full rounded-full transition-all duration-1000 ease-out" style="width: ${pct}%"></div>
                     </div>
-                    <div class="flex justify-between items-center text-xs">
-                        <span class="text-gray-400">ระดับความคิดเห็น:</span>
-                        <span class="font-bold text-pink-600">${getInterpretText(mean)}</span>
+                    <div class="flex justify-between items-center text-xs pt-1">
+                        <span class="text-gray-400 font-medium">ระดับแปลผล:</span>
+                        <span class="font-bold ${textColor} tracking-wide">${getInterpretText(mean)}</span>
                     </div>
                 </div>
             `;
         }
 
-        // โหลดข้อมูลสถิติที่ Admin เคยตั้งไว้
         function loadAdminStats() {
             const stats = JSON.parse(localStorage.getItem('kutchap_admin_stats')) || {
                 preOpd: 18, preIpd: 12, preTime: 36, preAcc: 72,
@@ -876,14 +978,12 @@
             document.getElementById('admin-post-acc').value = stats.postAcc;
         }
 
-        // บันทึกสถิติลง LocalStorage สำหรับผู้วิจัย
         function saveAdminStats() {
             const stats = {
                 preOpd: parseFloat(document.getElementById('admin-pre-opd').value) || 0,
                 preIpd: parseFloat(document.getElementById('admin-pre-ipd').value) || 0,
                 preTime: parseFloat(document.getElementById('admin-pre-time').value) || 0,
                 preAcc: parseFloat(document.getElementById('admin-pre-acc').value) || 0,
-                
                 postOpd: parseFloat(document.getElementById('admin-post-opd').value) || 0,
                 postIpd: parseFloat(document.getElementById('admin-post-ipd').value) || 0,
                 postTime: parseFloat(document.getElementById('admin-post-time').value) || 0,
@@ -892,45 +992,42 @@
             localStorage.setItem('kutchap_admin_stats', JSON.stringify(stats));
             
             Swal.fire({
-                icon: 'success',
-                title: 'บันทึกสถิติงานวิจัยสำเร็จ',
-                text: 'กราฟในหน้า Dashboard ถูกอัปเดตข้อมูลใหม่แล้ว',
-                confirmButtonColor: '#ec4899',
-                customClass: { popup: 'rounded-3xl' }
+                icon: 'success', title: 'บันทึกสำเร็จ', text: 'ข้อมูลบนกราฟถูกอัปเดตเรียบร้อยแล้ว', confirmButtonColor: '#ec4899', customClass: { popup: 'rounded-[2rem]' }
             });
             updateDashboardData();
         }
 
-        // เรนเดอร์กราฟโดยใช้ค่าจาก Admin
         function renderComparisonChart() {
             const stats = JSON.parse(localStorage.getItem('kutchap_admin_stats')) || {
-                preOpd: 18, preIpd: 12, preTime: 36, preAcc: 72,
-                postOpd: 31, postIpd: 23, postTime: 6, postAcc: 94
+                preOpd: 18, preIpd: 12, preTime: 36, preAcc: 72, postOpd: 31, postIpd: 23, postTime: 6, postAcc: 94
             };
 
             const ctx = document.getElementById('compChart').getContext('2d');
             if (resultChart) resultChart.destroy();
 
+            // Setup Custom Font for Chart
+            Chart.defaults.font.family = "'Sarabun', sans-serif";
+
             resultChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['จำนวนรายงาน OPD (ครั้ง)', 'จำนวนรายงาน IPD (ครั้ง)', 'ระยะเวลาเฉลี่ยบันทึกรายงาน (ชม.)', 'คุณภาพกรอกข้อมูลครบถ้วน (%)'],
+                    labels: ['การรายงาน OPD (ครั้ง)', 'การรายงาน IPD (ครั้ง)', 'เวลาเฉลี่ยบันทึก (ชม.)', 'ข้อมูลครบถ้วน (%)'],
                     datasets: [
                         {
-                            label: 'Baseline (ระบบเดิม)',
+                            label: 'ระบบเดิม (Baseline)',
                             data: [stats.preOpd, stats.preIpd, stats.preTime, stats.preAcc],
-                            backgroundColor: 'rgba(244, 114, 182, 0.75)',
-                            borderColor: 'rgb(244, 114, 182)',
-                            borderWidth: 1,
-                            borderRadius: 12
+                            backgroundColor: 'rgba(251, 113, 133, 0.85)',
+                            hoverBackgroundColor: 'rgba(251, 113, 133, 1)',
+                            borderRadius: 6,
+                            barPercentage: 0.6,
                         },
                         {
-                            label: 'Post-test (Smart Dashboard)',
+                            label: 'ระบบใหม่ (Smart Dashboard)',
                             data: [stats.postOpd, stats.postIpd, stats.postTime, stats.postAcc],
-                            backgroundColor: 'rgba(16, 185, 129, 0.75)',
-                            borderColor: 'rgb(16, 185, 129)',
-                            borderWidth: 1,
-                            borderRadius: 12
+                            backgroundColor: 'rgba(16, 185, 129, 0.85)',
+                            hoverBackgroundColor: 'rgba(16, 185, 129, 1)',
+                            borderRadius: 6,
+                            barPercentage: 0.6,
                         }
                     ]
                 },
@@ -938,51 +1035,40 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { position: 'top' }
+                        legend: { position: 'top', labels: { usePointStyle: true, padding: 20, font: { weight: 'bold' } } },
+                        tooltip: { backgroundColor: 'rgba(0,0,0,0.8)', titleFont: { size: 14 }, bodyFont: { size: 13 }, padding: 12, cornerRadius: 8 }
                     },
                     scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: '#f3f4f6' }
-                        },
-                        x: {
-                            grid: { display: false }
-                        }
+                        y: { beginAtZero: true, grid: { color: '#f3f4f6', drawBorder: false } },
+                        x: { grid: { display: false, drawBorder: false } }
                     }
                 }
             });
         }
 
-        // --- 6. ฟังก์ชันจัดการหลังระบบแอดมิน (Admin Panel) ---
-        let isAdminLoggedIn = false;
-
+        // Admin functionality
         function loginAdmin() {
             const pass = document.getElementById('admin-pass').value;
             if (pass === '1234') {
-                isAdminLoggedIn = true;
-                document.getElementById('admin-auth-card').classList.add('hidden');
-                document.getElementById('admin-panel').classList.remove('hidden');
-                updateAdminTable();
+                const authCard = document.getElementById('admin-auth-card');
+                authCard.style.opacity = 0;
+                setTimeout(() => {
+                    authCard.classList.add('hidden');
+                    const panel = document.getElementById('admin-panel');
+                    panel.classList.remove('hidden');
+                    panel.classList.add('fade-in');
+                    updateAdminTable();
+                }, 300);
             } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'รหัสผ่านไม่ถูกต้อง',
-                    text: 'กรุณาระบุรหัสผ่านที่ถูกต้องสำหรับผู้รับผิดชอบการวิจัย',
-                    confirmButtonColor: '#f472b6'
-                });
+                Swal.fire({ icon: 'error', title: 'รหัสผ่านไม่ถูกต้อง', text: 'กรุณาลองใหม่อีกครั้ง', confirmButtonColor: '#f472b6', customClass: { popup: 'rounded-3xl' } });
+                document.getElementById('admin-pass').value = '';
             }
         }
 
         function saveGasUrl() {
             const url = document.getElementById('gas-url').value;
             localStorage.setItem('kutchap_gas_url', url);
-            Swal.fire({
-                icon: 'success',
-                title: 'บันทึกการตั้งค่าแล้ว',
-                text: 'ลิงก์การเชื่อมต่อ Google Sheets ได้รับการตั้งค่าแล้ว',
-                confirmButtonColor: '#f472b6',
-                customClass: { popup: 'rounded-3xl' }
-            });
+            Swal.fire({ icon: 'success', title: 'บันทึกลิงก์สำเร็จ', confirmButtonColor: '#10b981', customClass: { popup: 'rounded-[2rem]' } });
         }
 
         function updateAdminTable() {
@@ -990,25 +1076,25 @@
             tbody.innerHTML = '';
 
             if (responses.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-gray-400 font-medium">ยังไม่มีข้อมูลดิบเข้าสู่ระบบแบบสอบถามในขณะนี้</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="p-10 text-center text-gray-400 font-medium"><div class="flex flex-col items-center"><i class="fa-solid fa-inbox text-3xl mb-3 opacity-30"></i>ยังไม่มีข้อมูลในระบบ</div></td></tr>`;
                 return;
             }
 
-            // แสดงรายการข้อมูลย้อนหลัง
             [...responses].reverse().forEach(row => {
+                const isPre = row.FormType === 'Pre-Test';
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-pink-50/20';
+                tr.className = 'hover:bg-gray-50 transition-colors duration-200';
                 tr.innerHTML = `
-                    <td class="p-3 sm:p-4 font-bold text-gray-700">${row.id || '-'}</td>
-                    <td class="p-3 sm:p-4">
-                        <span class="px-2 py-1 rounded-lg text-xs font-bold ${row.FormType === 'Pre-Test' ? 'bg-pink-100 text-pink-700' : 'bg-emerald-100 text-emerald-700'}">
+                    <td class="p-4 font-bold text-gray-800">${row.id || '-'}</td>
+                    <td class="p-4">
+                        <span class="px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm ${isPre ? 'bg-pink-100 text-pink-700' : 'bg-emerald-100 text-emerald-700'}">
                             ${row.FormType}
                         </span>
                     </td>
-                    <td class="p-3 sm:p-4 text-xs font-mono">${row.Timestamp ? new Date(row.Timestamp).toLocaleString('th-TH') : '-'}</td>
-                    <td class="p-3 sm:p-4 font-semibold text-gray-600">${row.Q1 || '-'}</td>
-                    <td class="p-3 sm:p-4 font-semibold text-gray-600">${row.Q2 || '-'}</td>
-                    <td class="p-3 sm:p-4"><i class="fa-solid fa-circle-check text-emerald-500"></i> ${row.Consent || 'Yes'}</td>
+                    <td class="p-4 text-xs font-mono text-gray-500">${row.Timestamp ? new Date(row.Timestamp).toLocaleString('th-TH') : '-'}</td>
+                    <td class="p-4 font-medium text-gray-600">${(row.Q1 || '-').split('_')[1] || row.Q1 || '-'}</td>
+                    <td class="p-4 font-medium text-gray-600">${(row.Q2 || '-').split('_')[1] || row.Q2 || '-'}</td>
+                    <td class="p-4 text-center"><i class="fa-solid fa-circle-check text-emerald-500 text-lg"></i></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -1017,14 +1103,9 @@
         function clearSystemData() {
             Swal.fire({
                 title: 'ยืนยันการล้างข้อมูล?',
-                text: "สถิติและการบันทึกทั้งหมดภายในเครื่องนี้จะหายไป (แต่ข้อมูลบน Google Sheets จะไม่ได้รับผลกระทบ)",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#ef4444',
-                cancelButtonColor: '#6b7280',
-                confirmButtonText: 'ล้างข้อมูล',
-                cancelButtonText: 'ยกเลิก',
-                customClass: { popup: 'rounded-3xl' }
+                text: "ข้อมูลแบบสอบถามในเครื่องนี้จะหายไป (บน Google Sheets จะยังคงอยู่)",
+                icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#9ca3af',
+                confirmButtonText: 'ใช่, ล้างเลย', cancelButtonText: 'ยกเลิก', customClass: { popup: 'rounded-[2rem]' }
             }).then((result) => {
                 if (result.isConfirmed) {
                     responses = [];
@@ -1032,31 +1113,25 @@
                     updateDashboardData();
                     updateAdminTable();
                     renderQuestions();
-                    Swal.fire({title: 'ล้างระบบข้อมูลสำเร็จ!', icon: 'success', confirmButtonColor: '#ec4899', customClass: { popup: 'rounded-3xl' }});
+                    Swal.fire({title: 'ล้างข้อมูลสำเร็จ', icon: 'success', confirmButtonColor: '#10b981', customClass: { popup: 'rounded-[2rem]' }});
                 }
             });
         }
 
         function exportDataToCsv() {
-            if (responses.length === 0) {
-                return Swal.fire({ icon: 'info', title: 'ไม่มีข้อมูล', text: 'ไม่พบข้อมูลสำหรับการส่งออกไฟล์ในขณะนี้', confirmButtonColor: '#ec4899' });
-            }
+            if (responses.length === 0) return Swal.fire({ icon: 'info', title: 'ไม่มีข้อมูลให้ส่งออก', confirmButtonColor: '#3b82f6', customClass: { popup: 'rounded-3xl' } });
 
-            // ค้นหาคีย์ทั้งหมดที่มีในข้อมูลแบบรวม
             let headers = new Set();
             responses.forEach(r => Object.keys(r).forEach(k => headers.add(k)));
             const headerArray = Array.from(headers);
 
-            let csvContent = "\uFEFF"; // ป้องกันการแสดงผลภาษาไทยเพี้ยนใน Excel (BOM)
+            let csvContent = "\uFEFF"; 
             csvContent += headerArray.join(",") + "\n";
 
             responses.forEach(row => {
                 let rowValues = headerArray.map(h => {
                     let val = row[h] !== undefined ? row[h] : "";
-                    // ล้างเครื่องหมายจุลภาคเพื่อไม่ให้โครงสร้าง CSV ขยับ
-                    if (typeof val === 'string') {
-                        val = val.replace(/,/g, " ");
-                    }
+                    if (typeof val === 'string') val = val.replace(/,/g, " ");
                     return `"${val}"`;
                 });
                 csvContent += rowValues.join(",") + "\n";
@@ -1065,9 +1140,8 @@
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
-            link.setAttribute("href", url);
-            link.setAttribute("download", `kutchap_dashboard_raw_data.csv`);
-            link.style.visibility = 'hidden';
+            link.href = url;
+            link.download = `kutchap_data_${new Date().getTime()}.csv`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
